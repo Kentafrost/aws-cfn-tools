@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoke Lambda via API Gateway</title>
+</head>
+<body>
+    <h1>Invoke Lambda Function</h1>
+    <button onclick="invokeLambda()">Invoke Lambda</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function invokeLambda() {
+            const apiUrl = "https://8m5wd6igmb.execute-api.ap-southeast-2.amazonaws.com/prod/lambda"; // Replace with your API Gateway endpoint
+            document.getElementById('result').textContent = "Invoking...";
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "GET", // Simply invoke Lambda with a GET request
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = "Error: " + error;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create a Lambda function with access to an S3 bucket triggered by API Gateway"
+
+Parameters:
+  VpcId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /VPC
+  PrivSubnetId1:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PrivateSubnet1
+  PrivSubnetId2:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PrivateSubnet2
+  LambdaSecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /LambdaSecurityGroup
+  WebBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /WebS3BucketName
+  CodeS3Bucket:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /CodeS3BucketName
+  LambdaExecutionRoleArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /LambdaExecutionRole
+  basicSNSTopicArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /basicSNSTopic
+
+Resources:
+  ApiGwLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "apigw-lambda-s3access"
+      Runtime: python3.12
+      Handler: main.handler
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: "test/api_lambda.zip" 
+      Timeout: 30
+      MemorySize: 128
+      Role: !Ref LambdaExecutionRoleArn
+      # VpcConfig:
+      #   SubnetIds:
+      #     - !Ref PrivSubnetId1
+      #     - !Ref PrivSubnetId2
+      #   SecurityGroupIds:
+      #     - !Ref LambdaSecurityGroup
+      Environment:
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
+          WebS3BUCKET: !Ref WebBucketName
+          SNS_TOPIC_ARN: !Ref basicSNSTopicArn
+
+  SSMLambdaFunctionName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ApiGWLambdaFunctionName
+      Type: String
+      Value: !Ref ApiGwLambdaFunction
+
+  SSMLambdaFunctionArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ApiGWLambdaFunctionArn
+      Type: String
+      Value: !GetAtt ApiGwLambdaFunction.Arn

@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "To enable access to Internet through Internet Gateway"
+
+Parameters:
+  Vpc:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /VPC
+  PublicSubnet1:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicSubnet1
+  PublicSubnet2:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicSubnet2
+
+Resources:
+  #*************RouteTable***********
+  PublicRoutetable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+
+  #***********Internet Gateway*******
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InternetGateway
+  
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRoutetable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # Associate the subnets with the route table
+  AssoPubSub1RT:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRoutetable
+
+  AssoPubSub2RT:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRoutetable
+
+  #*************SSM*************
+  SSMPublicRoutetable:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PublicRouteTable"
+      Type: String
+      Value: !Ref PublicRoutetable

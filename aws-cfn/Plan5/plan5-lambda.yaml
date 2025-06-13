@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create a Lambda function to check EC2 instances and send SNS messages"
+
+Parameters:
+  CodeS3Bucket:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /CodeS3BucketName
+  LambdaExecutionRoleArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /LambdaExecutionRole
+  basicSNSTopicArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /basicSNSTopic
+
+Resources:
+  EC2CheckInstancesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "EC2CheckInstances"
+      Runtime: python3.12
+      Handler: main.lambda_handler
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: "test/ec2_check_instances.zip" 
+      Timeout: 30
+      MemorySize: 128
+      Role: !Ref LambdaExecutionRoleArn
+      Environment:
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
+          SNS_TOPIC_ARN: !Ref basicSNSTopicArn
+
+  SSMEC2CheckInstancesLambdaFunctionArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /EC2CheckInstancesLambdaFunctionName
+      Type: String
+      Value: !Ref EC2CheckInstancesLambdaFunction

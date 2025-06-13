@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  PublicEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy # CWAgentで監視用ポリシー
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore # SSMパラメータに書き込む用ポリシー
+
+  # SSM Parameter Store for role and instance profile
+  SSMPublicEC2InstanceRole:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PublicEC2InstanceIAMRole"
+      Type: String
+      Value: !Ref PublicEC2Role
