@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: API Gateway to invoke Lambda
+
+Parameters:
+  LambdaFunctionName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /ApiGWLambdaFunctionName
+
+  LambdaFunctionArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /ApiGWLambdaFunctionArn
+
+Resources:
+  ApiToLambda:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: ApiGWForLambda
+      Description: API Gateway to invoke a Lambda function
+
+  ApiToLambdaResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiToLambda
+      ParentId: !GetAtt ApiToLambda.RootResourceId
+      PathPart: lambda
+
+  ApiToLambdaMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiToLambda
+      ResourceId: !Ref ApiToLambdaResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionArn}/invocations
+
+  LambdaApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: 
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiToLambda}/*/GET/lambda
+
+  # To enable access from HTML/JS client
+  ApiToLambdaOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiToLambda
+      ResourceId: !Ref ApiToLambdaResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Deployment, stage of the API Gateway to enable access with the public URL
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref ApiToLambda
+      StageName: prod
+    DependsOn:
+      - ApiToLambdaMethod
+      - ApiToLambdaOptionsMethod
+
+  # ApiStage:
+  #   Type: AWS::ApiGateway::Stage
+  #   Properties:
+  #     StageName: prod
+  #     RestApiId: !Ref ApiToLambda
+  #     DeploymentId: !Ref ApiDeployment
+
+Outputs:
+  ApiInvokeURL:
+    Description: "Invoke URL for the API Gateway"
+    Value: 
+      Fn::Sub: https://${ApiToLambda}.execute-api.${AWS::Region}.amazonaws.com/prod/lambda

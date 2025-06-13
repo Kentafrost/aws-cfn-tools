@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "EC2 Fleet with Launch Template"
+
+Parameters:
+  PublicEC2SecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicEC2SecurityGroup
+
+  PrivateEC2SecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PrivateEC2SecurityGroup
+
+  PublicKeyPair:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicKeypair
+
+Resources:
+  MyEC2Fleet:
+    Type: AWS::EC2::EC2Fleet
+    Properties:
+      LaunchTemplateConfigs:
+        - LaunchTemplateSpecification:
+            LaunchTemplateId: !Ref PublicLaunchTemplate
+            Version: !GetAtt PublicLaunchTemplate.LatestVersionNumber
+          Overrides:
+            - InstanceType: "t3.micro"
+              WeightedCapacity: 2
+      TargetCapacitySpecification:
+        TotalTargetCapacity: 2
+        DefaultTargetCapacityType: "spot"
+        OnDemandTargetCapacity: 2
+      ReplaceUnhealthyInstances: true
+      ExcessCapacityTerminationPolicy: "no-termination"
+
+  PublicLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: "PublicEC2FleetTemplate"
+      LaunchTemplateData:
+        ImageId: "ami-0f14d0949beaa4f7e"  # Replace with your AMI ID
+        InstanceType: "t3.micro"
+        SecurityGroupIds:
+          - !Ref PublicEC2SecurityGroup
+        KeyName: !Ref PublicKeyPair
+
+Outputs:
+  FleetId:
+    Description: "EC2 Fleet ID"
+    Value: !Ref MyEC2Fleet

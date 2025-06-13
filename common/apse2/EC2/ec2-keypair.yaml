@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "AWS CloudFormation template to create EC2 Key Pairs."
+
+Resources:
+  PublicKeyPair:
+    Type: "AWS::EC2::KeyPair"
+    Properties:
+      KeyName: KeyPair_PublicWindows
+
+  PrivateKeyPair:
+    Type: "AWS::EC2::KeyPair"
+    Properties:
+      KeyName: KeyPair_PrivateWindows
+
+  SSMPublicKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PublicKeypair"
+      Type: String
+      Value: !Ref PublicKeyPair
+
+  SSMPrivateKey:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PrivateKeypair"
+      Type: String
+      Value: !Ref PrivateKeyPair

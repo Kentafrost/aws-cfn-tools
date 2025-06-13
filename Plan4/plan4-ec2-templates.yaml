@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "EC2 Fleet with Launch Template"
+
+Parameters:
+  PublicEC2SecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicEC2SecurityGroup
+
+  PrivateEC2SecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PrivateEC2SecurityGroup
+
+  PublicKeyPair:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicKeypair
+
+Resources:
+
+  PublicLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: "PublicEC2FleetTemplate"
+      LaunchTemplateData:
+        ImageId: "ami-0f14d0949beaa4f7e"  # Replace with your AMI ID
+        InstanceType: "t3.micro"
+        SecurityGroupIds:
+          - !Ref PublicEC2SecurityGroup
+        KeyName: !Ref PublicKeyPair

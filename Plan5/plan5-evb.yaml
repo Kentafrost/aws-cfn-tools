@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create eventbridge rule to trigger Lambda function for EC2 instance checks"
+
+Parameters:
+  lambdaFunctionName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: "/EC2CheckInstancesLambdaFunctionName"
+
+Resources:
+  EC2CheckInstancesEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "${lambdaFunctionName}-event-rule"
+      Description: "Event rule to trigger Lambda function for EC2 instance checks"
+      ScheduleExpression: "rate(1 day)"
+      State: "DISABLED"
+      Targets:
+        - Arn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${lambdaFunctionName}"
+          Id: "EC2CheckInstancesLambdaTarget"
+
+  LambdaPermissionForEventBridge:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref lambdaFunctionName
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt EC2CheckInstancesEventRule.Arn
