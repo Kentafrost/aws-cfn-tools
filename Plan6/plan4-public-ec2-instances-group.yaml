@@ -30,5 +30,3 @@ Resources:
         - Key: PatchGroup
           Value: WindowsFleet
       IamInstanceProfile: !Ref PublicEC2InstanceProfile
-
-A
