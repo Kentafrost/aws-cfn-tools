@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "To enable access to S3 buckets from Private Subnet, using Lambda function"
+
+Resources:
+  # S3 bucket for CloudFormation
+  CodeS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "code-apse2-bucket1313"
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: false
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  CodeBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CodeS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # permit to get and upload files from local user
+          - Sid: AllowUserUpload
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::204806963442:user/test_local
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:PutObjectAcl
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:GetBucketVersioning
+            Resource: 
+              - !Sub 'arn:aws:s3:::${CodeS3Bucket}'
+              - !Sub 'arn:aws:s3:::${CodeS3Bucket}/*'
+          # permit to get zip file from Lambda service
+          - Sid: AllowLamdandaAccess
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - s3:GetObject
+            Resource: 
+              - !Sub 'arn:aws:s3:::${CodeS3Bucket}/*'
+
+  # SSM Parameters to store bucket names
+  CodeBucketSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "CodeS3BucketName"
+      Type: String
+      Value: !Ref CodeS3Bucket

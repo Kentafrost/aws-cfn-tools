@@ -5,6 +5,7 @@ Resources:
   PublicEC2Role:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: "public-ec2-iam-role"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -15,8 +16,22 @@ Resources:
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy # CWAgentで監視用ポリシー
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore # SSMパラメータに書き込む用ポリシー
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+      Policies:
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "arn:aws:s3:::ec2-websites-apse2-bucket1313"
+                  - !Sub "arn:aws:s3:::ec2-websites-apse2-bucket1313/*"
 
   # SSM Parameter Store for role and instance profile
   SSMPublicEC2InstanceRole:

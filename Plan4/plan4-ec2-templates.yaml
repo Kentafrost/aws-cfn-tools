@@ -19,7 +19,7 @@ Resources:
   PublicLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: "PublicEC2FleetTemplate"
+      LaunchTemplateName: "PublicEC2Template"
       LaunchTemplateData:
         ImageId: "ami-0f14d0949beaa4f7e"  # Replace with your AMI ID
         InstanceType: "t3.micro"

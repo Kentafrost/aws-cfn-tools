@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "To enable access to S3 buckets from Private Subnet, using Lambda function"
+
+Resources:
+  # S3 Bucket for Lambda function
+  EC2WebsitesS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "ec2-websites-apse2-bucket1313"
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      MetricsConfigurations:
+        - Id: "EntireBucket"
+      # ReplicationConfiguration:
+      #   Role: !Sub arn:aws:iam::${AWS::AccountId}:role/S3ReplicationRole-Source
+      #   Rules:
+      #     - Id: ReplicateToTokyo
+      #       Status: Enabled
+      #       Destination:
+      #         Bucket: 'arn:aws:s3:::ec2-websites-apne1-backup-bucket1313'
+      #         StorageClass: STANDARD
+      # Send e-mail notification to SNS topic when an object is created
+      # NotificationConfiguration:
+      #   TopicConfigurations:
+      #     - Event: s3:ObjectCreated:Put
+      #       Topic: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+
+  EC2WebsitesS3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref EC2WebsitesS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # - Sid: ReplicationPermissions
+          #   Effect: Allow
+          #   Principal: 
+          #     AWS: 
+          #       - !Sub arn:aws:iam::${AWS::AccountId}:role/S3ReplicationRole-Source
+          #       - !Sub arn:aws:iam::${AWS::AccountId}:role/S3ReplicationRole-Destination
+          #   Action:
+          #     - s3:* 
+          #   Resource:
+          #     - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}" 
+          #     - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}/*"
+
+          - Sid: AllowAccessFromMyAccountsResources
+            Effect: Allow
+            Principal: 
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action:
+              - s3:*
+            Resource: 
+              - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}"
+              - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}/*"
+            # Condition: # for S3 Endpoint
+            #   StringEquals:
+            #     aws:SourceVpce: !Ref S3EndpointId
+
+          - Sid: AllowAccessFromPublicSubnet
+            Effect: Allow
+            Principal: 
+              AWS: 
+                - !Sub arn:aws:iam::${AWS::AccountId}:role/public-ec2-iam-role
+            Action:
+              - s3:*
+            Resource: 
+              - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}"
+              - !Sub "arn:aws:s3:::${EC2WebsitesS3Bucket}/*"
+
+  EC2WebsitesS3BucketSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "EC2WebsitesS3BucketName"
+      Type: String
+      Value: !Ref EC2WebsitesS3Bucket

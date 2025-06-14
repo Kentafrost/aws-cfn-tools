@@ -70,11 +70,24 @@ Resources:
           CidrIp: 172.20.12.0/24 # to Private Subnet2
           Description: "Allow SSH/RDP traffic from Private Subnet2"
 
+        # for web access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: "Allow HTTP traffic from anywhere"
+
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: "Allow HTTPS traffic from anywhere"
+
       SecurityGroupEgress:
         - IpProtocol: -1 # All traffic
           FromPort: 0
           ToPort: 0
-          CidrIp: 0.0.0/0 # allow all outbound traffic
+          CidrIp: 0.0.0.0/0 # allow all outbound traffic
 
   PrivateEC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup

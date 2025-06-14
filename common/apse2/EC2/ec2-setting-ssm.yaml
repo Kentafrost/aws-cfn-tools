@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
+Description: "The Setting for CloudWatch Agent"
 
 Resources:
   # For CWAgent Setting
@@ -15,6 +16,12 @@ Resources:
             "run_as_user": "System"
           },
           "metrics": {
+            "namespace": "CWAgent/EC2Metrics",
+            "append_dimensions": {
+              "InstanceId": "${aws:InstanceId}",
+              "InstanceType": "${aws:InstanceType}",
+              "ImageId": "${aws:ImageId}"
+            },
             "metrics_collected": {
               "CPU": {
                 "measurement": [
@@ -64,3 +71,62 @@ Resources:
             }
           }
         }
+
+  EC2ScriptsSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: EC2ScriptsSSM
+      Type: String
+      Value: |
+        <powershell>
+        # Install CloudWatch Agent and set up using SSM Parameter Store
+
+        mkdir C:\Downloads\Amazon\AmazonCloudWatchAgent
+        powershell -Command "(New-Object Net.WebClient).DownloadFile('https://s3.amazonaws.com/amazoncloudwatch-agent/windows/amd64/latest/amazon-cloudwatch-agent.msi','C:\Downloads\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent.msi')"
+        msiexec.exe /i C:\Downloads\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent.msi /qn
+        powershell -Command "C:\'Program Files'\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c ssm:${ssmkey} -s"
+        cfn-init.exe -v --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region} --configsets default
+        cfn-signal.exe -e %errorlevel% --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region}
+        
+        # Download and install SSM Agent
+        Invoke-WebRequest -Uri https://s3.amazonaws.com/amazon-ssm-${AWS::Region}/latest/windows_amd64/AmazonSSMAgentSetup.exe -OutFile C:\Temp\AmazonSSMAgentSetup.exe
+        Start-Process -FilePath C:\Temp\AmazonSSMAgentSetup.exe -ArgumentList "/quiet" -Wait
+        
+        # Install AWS CLI v2
+        curl "https://awscli.amazonaws.com/AWSCLIV2.msi" -o "AWSCLIV2.msi"
+        msiexec.exe /i AWSCLIV2.msi /qn
+        
+        # Install IIS and log output
+        powershell -Command "Install-WindowsFeature -name Web-Server -IncludeManagementTools | Out-File -FilePath C:\iis-install.log -Append"
+
+        # Wait for IIS installation to complete (timeout after 5 minutes)
+        $timeout = 300
+        $elapsed = 0
+        $interval = 20
+        while (-not (Get-WindowsFeature -Name Web-Server).Installed -and $elapsed -lt $timeout) {
+            Start-Sleep -Seconds $interval
+            $elapsed += $interval
+        }
+
+        # Check if IIS installed successfully
+        if (!(Get-WindowsFeature -Name Web-Server).Installed) {
+            Write-Host 'IIS installation failed!' | Out-File -FilePath C:\iis-install.log -Append
+            exit 1
+        }
+
+        # Ensure the web root exists
+        if (!(Test-Path -Path 'C:\inetpub\wwwroot')) {
+            New-Item -ItemType Directory -Path 'C:\inetpub\wwwroot'
+        }
+
+        # install web page from S3 bucket
+        $bucketName = "ec2-websites-apse2-bucket1313"
+        $objectKey = "index.html"
+        $localPath = "C:\inetpub\wwwroot\index.html"
+        $s3Uri = "https://$bucketName.s3.amazonaws.com/$objectKey"
+        Invoke-WebRequest -Uri $s3Uri -OutFile $localPath
+
+        # Start the CloudWatch Agent
+        & 'C:\Program Files\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent-ctl.ps1' -a fetch-config -m ec2 -c ssm:CWAgentConfig -s
+
+        </powershell>
