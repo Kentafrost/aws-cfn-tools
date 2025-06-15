@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "EC2 Fleet with Launch Template"
+
+Resources:
+  # EventBridge Rule for DLM Lifecycle Events
+  DLMEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: "DLMEventRule"
+      Description: "Notify on DLM lifecycle events"
+      EventPattern:
+        source:
+          - "aws.dlm"
+        detail-type:
+          - "DLM Lifecycle Policy State Change"
+      State: ENABLED
+      Targets:
+        - Arn: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:dlm-notifications-sns-topic
+          Id: "DLMSNSTarget"

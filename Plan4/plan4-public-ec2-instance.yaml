@@ -37,6 +37,7 @@ Resources:
       # ami-03af661583141dc27 # Windows Server 2025 Base
       InstanceType: t3.micro # Supports UEFI
       KeyName: !Ref PublicKeyPair
+      VolumeId: !Ref PublicVolume
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: 0
@@ -54,6 +55,17 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicEC2Instance
+
+  # EBS Volume for public EC2 Instance
+  PublicEBSVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: !FindInMap ["instance", "region", "az1"]
+      Size: 30
+      VolumeType: gp2 # General Purpose SSD
+      Tags:
+        - Key: Name
+          Value: PublicEBSVolume
 
   # SSM Parameter for EC2 Instance
   SSMPublicEC2Instance:

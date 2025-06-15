@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "EC2 Fleet with Launch Template"
+
+Resources:
+
+  # EC2 AMI Lifecycle Policy
+  PublicEC2AMILifecyclePolicy:
+    Type: AWS::DLM::LifecyclePolicy
+    Properties:
+      Name: "PublicEC2InstanceAMILifecyclePolicy"
+      Description: "Daily AMI backup for EC2 instances with specific tag"
+      State: DISABLED
+      ExecutionRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/service-role/AWSDataLifecycleManagerDefaultRole
+      PolicyDetails:
+        ResourceTypes: 
+          - INSTANCE
+        TargetTags:
+          - Key: Name
+            Value: PublicEC2Instance
+        Schedules:
+          - Name: "Daily AMI Backup"
+            CopyTags: true
+            CreateRule:
+              Interval: 24
+              IntervalUnit: HOURS
+              Times:
+                - "00:00"
+            RetainRule:
+              Count: 1
+        
+  # EBS Volume Lifecycle Policy
+  PublicEBSVolumeLifecyclePolicy:
+    Type: AWS::DLM::LifecyclePolicy
+    Properties:
+      Name: "PublicEBSVolumeLifecyclePolicy"
+      Description: "Daily EBS volume backup for volumes with specific tag"
+      State: DISABLED
+      ExecutionRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/service-role/AWSDataLifecycleManagerDefaultRole
+      PolicyDetails:
+        ResourceTypes:
+          - VOLUME
+        TargetTags:
+          - Key: Name
+            Value: PublicEBSVolume
+        Schedules:
+          - Name: "Daily EBS Volume Backup"
+            CopyTags: true
+            CreateRule:
+              Interval: 24
+              IntervalUnit: HOURS
+              Times:
+                - "00:00"
+            RetainRule:
+              Count: 1
+              

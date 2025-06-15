@@ -140,6 +140,33 @@ Resources:
       Protocol: SMS
       Endpoint: !Ref phonenumber
 
+  # DLM Notifications SNS Topic
+  DLMNotificationsSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: dlm-notifications-sns-topic
+      DisplayName: "DLM Notifications SNS Topic"
+
+  DLMNotificationsSNSTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref DLMNotificationsSNSTopic ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - dlm.amazonaws.com
+            Action: "SNS:Publish"
+            Resource: !Ref DLMNotificationsSNSTopic
+
+  DLMNotificationsSNSTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DLMNotificationsSNSTopic
+      Protocol: email
+      Endpoint: !Ref gmailAddress
 
   # ===================================
   # SSM Parameter
