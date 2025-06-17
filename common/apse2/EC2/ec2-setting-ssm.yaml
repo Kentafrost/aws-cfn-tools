@@ -126,7 +126,22 @@ Resources:
         $s3Uri = "https://$bucketName.s3.amazonaws.com/$objectKey"
         Invoke-WebRequest -Uri $s3Uri -OutFile $localPath
 
+        $objectKey = "dynamodb_put.py"
+        $localPath = "C:\inetpub\wwwroot\dynamodb_put.py"
+        $s3Uri = "https://$bucketName.s3.amazonaws.com/$objectKey"
+        Invoke-WebRequest -Uri $s3Uri -OutFile $localPath
+
         # Start the CloudWatch Agent
         & 'C:\Program Files\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent-ctl.ps1' -a fetch-config -m ec2 -c ssm:CWAgentConfig -s
+
+        # Install Python and pip
+        Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.9.6/python-3.9.6-amd64.exe -OutFile C:\Temp\python-3.9.6-amd64.exe
+        Start-Process -FilePath C:\Temp\python-3.9.6-amd64.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
+        
+        # Install pip
+        python -m ensurepip --upgrade
+
+        # Install required Python packages
+        python -m pip install pandas
 
         </powershell>

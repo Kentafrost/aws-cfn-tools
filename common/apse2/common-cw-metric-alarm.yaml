@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudWatch Logs Subscription Filter for Lambda Log Group"
+
+Parameters:
+
+  WebS3BucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /WebS3BucketName
+    Description: "Name of the S3 bucket for web access"
+
+  ErrorSNSTopic:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /ErrorLambdaSNSTopic
+    Description: "ARN of the SNS topic to notify on Lambda errors"
+
+Mappings:
+  LambdaPart2:
+    Lambda:
+      Name: "apigw-lambda-s3access"
+  LambdaPart5:
+    Lambda:
+      Name: "EC2CheckInstances"
+
+Resources:
+
+  # Lamda functions
+
+  # ==============================
+  # Part2
+  ApiGwLambdaMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ LambdaPart2, Lambda, Name ] ] ]
+      FilterPattern: "ERROR"  # Empty string matches all logs; customize as needed
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: "Custom/Lambda/ApiGwLambda"
+          MetricName: "DetectedErrors"
+      FilterName: !Join [ "", [ !FindInMap [ LambdaPart2, Lambda, Name ], "-LogFilter" ] ]
+
+  # Log Alarm to invoke SNS topic for error notifications
+  ApiGwLambdaLogAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Join [ "", [ !FindInMap [ LambdaPart2, Lambda, Name ], "-ErrorAlarm" ] ]
+      MetricName: DetectedErrors
+      Namespace: Custom/Lambda/ApiGwLambda # same to the defined MetricNamespace in MetricFilter
+      Statistic: Sum
+      Period: 120
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref ErrorSNSTopic  # Invoke SNS topic to invoke the lambda function for error notifications
+
+  # Log Alarm to invoke SNS topic for S3 metric alarm
+  # S3PutObjectAlarm:
+  #   Type: AWS::CloudWatch::Alarm
+  #   Properties:
+  #     AlarmName: !Sub "${WebS3BucketName}-PutObjectAlarm"
+  #     Namespace: AWS/S3
+  #     MetricName: PutRequests
+  #     Dimensions:
+  #       - Name: BucketName
+  #         Value: !Ref WebS3BucketName
+  #       - Name: StorageType
+  #         Value: AllStorageTypes
+  #     Statistic: Sum
+  #     Period: 300
+  #     EvaluationPeriods: 1
+  #     Threshold: 0
+  #     ComparisonOperator: GreaterThanThreshold
+  #     AlarmActions:
+  #       - !Ref ErrorSNSTopic
+
+  # ==============================
+  # Part5
+  EC2CheckInstancesLambdaMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ LambdaPart5, Lambda, Name ] ] ]
+      FilterPattern: "ERROR"  # Empty string matches all logs; customize as needed
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: "Custom/Lambda/EC2CheckInstances"
+          MetricName: "DetectedErrors"
+      FilterName: !Join [ "", [ !FindInMap [ LambdaPart5, Lambda, Name ], "-LogFilter" ] ]
+
+  # Log Alarm to invoke SNS topic for error notifications
+  EC2CheckInstancesLambdaLogAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Join [ "", [ !FindInMap [ LambdaPart5, Lambda, Name ], "-ErrorAlarm" ] ]
+      MetricName: DetectedErrors
+      Namespace: Custom/Lambda/EC2CheckInstances
+      Statistic: Sum
+      Period: 120
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref ErrorSNSTopic # to send error notifications to SNS topic

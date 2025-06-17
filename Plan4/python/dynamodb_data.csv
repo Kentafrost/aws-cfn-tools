@@ -1,0 +1,5 @@
+id,name,description
+1,UserTable,Table to store user information
+2,OrderTable,Table to store order details
+3,ProductTable,Table to store product information
+4,InventoryTable,Table to manage product inventory

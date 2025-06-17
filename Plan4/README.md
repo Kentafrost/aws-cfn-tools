@@ -60,6 +60,13 @@
   Sets up security groups for public and private access.
   To enable access from local PC, and inside another public subnet.
 
+- **DynamoDB Table:**
+  `Plan4/plan4-dynamodb-table.yaml`  
+
+- **Python scripts on EC2 instance:**
+  `Plan4/python/dynamodb_put.py`
+  Downloads csv file from S3 bucket, then put data into DynamoDB table.
+
 ---
 
 ## Automation Scripts
