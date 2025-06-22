@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create a Lambda function using ECR image"
+
+Parameters:
+  LambdaECRRoleArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /LambdaECRExecutionRole
+  basicSNSTopicArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /basicSNSTopic
+  ecrRepositoryName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /Plan7EcrRepository
+  WebS3BucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /WebS3BucketName
+
+Resources:
+  ECRLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "plan7-ecr-chkinstances-function"
+      Role: !Ref LambdaECRRoleArn
+      PackageType: Image
+      Code:
+        ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ecrRepositoryName}:latest"
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
+          SNS_TOPIC_ARN: !Ref basicSNSTopicArn
+          WebS3BUCKET: !Ref WebS3BucketName
+
+  SSMECRLambdaFunctionArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ECRLambdaFunctionName
+      Type: String
+      Value: !Ref ECRLambdaFunction

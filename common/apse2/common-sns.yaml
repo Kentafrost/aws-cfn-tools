@@ -157,7 +157,7 @@ Resources:
           - Effect: Allow
             Principal:
               Service: 
-                - dlm.amazonaws.com
+                - events.amazonaws.com
             Action: "SNS:Publish"
             Resource: !Ref DLMNotificationsSNSTopic
 

@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create ECR registry for EC2 Check Instances Lambda function"
+
+Parameters:
+  CountNumber:
+    Type: Number
+    Default: 2
+    Description: "Number of days after which untagged images expire"
+
+Resources:
+  ECRRegistry:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "plan7-ecr-check-instances"
+      ImageScanningConfiguration:
+        scanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: !Sub |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images older than 2 days",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": ${CountNumber}
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+
+  ECRRepositorySSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "Plan7EcrRepository"
+      Type: String
+      Value: !Ref ECRRegistry

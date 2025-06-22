@@ -7,9 +7,12 @@ Description: "IAM Role for Lambda function with access to S3 buckets"
   #   Default: /S3EndpointId
 
 Resources:
-  LambdaExecutionRole:
+
+  # Lambda Execution Role
+  BasicLambdaRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: "lambda-basic-role"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -19,6 +22,7 @@ Resources:
             Action: "sts:AssumeRole"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
       Policies:
         - PolicyName: LambdaS3AccessPolicy
           PolicyDocument:
@@ -56,9 +60,65 @@ Resources:
                   - ec2:StopInstances
                 Resource: "*"
 
+  # ECR Lambda Execution Role
+  ECRLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "lambda-ecr-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      Policies:
+        - PolicyName: LambdaS3AccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # after creating S3 Endpoint, then comment this in
+              - Sid: AllowLambdaS3Access
+                Effect: Allow
+                Action:
+                  - s3:putObject
+                  - s3:getObject
+                  - s3:deleteObject
+                  - s3:ListBucket
+                Resource:
+                  - 'arn:aws:s3:::web-apse2-bucket1313' # plan2
+                  - 'arn:aws:s3:::web-apse2-bucket1313/*' # plan2
+                # Condition:
+                #   StringEquals:
+                #     aws:SourceVpce: !Ref S3EndpointId
+
+              - Sid: SendMsgToSNS
+                Effect: Allow
+                Action: sns:Publish
+                Resource: 
+                  - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+
+              - Sid: AllowECRAccess
+                Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchGetImage
+                  - ecr:GetDownloadUrlForLayer
+                Resource: "*"
+
   LambdaRoleSSM:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "LambdaExecutionRole"
+      Name: "BasicLambdaRole"
       Type: String
-      Value: !GetAtt LambdaExecutionRole.Arn
+      Value: !GetAtt BasicLambdaRole.Arn
+
+  LambdaRoleECRSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "LambdaECRExecutionRole"
+      Type: String
+      Value: !GetAtt ECRLambdaRole.Arn
