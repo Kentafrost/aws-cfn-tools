@@ -30,11 +30,11 @@ Resources:
     Properties:
       FunctionName: "MyS3AccessLambda"
       Runtime: python3.12
-      Role: !Ref LambdaExecutionRoleArn
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/lambda-basic-role"
       Handler: main.handler
       Code:
         S3Bucket: !Ref CodeS3Bucket
-        S3Key: "test/s3_access_lambda.zip" 
+        S3Key: "lambda/zip/s3_access_lambda.zip" 
       Timeout: 30
       MemorySize: 128
       # VpcConfig:

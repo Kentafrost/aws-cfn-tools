@@ -29,3 +29,7 @@ S3 Bucket ⇒ HTML URL ⇒ Javascript ⇒ API Gateway ⇒ Lambda
 
 * Local PC(only allowed IP) ⇒ Website in S3 bucket ⇒ API GW ⇒ Lambda function ⇒ SNS topic publish
 * URL access ⇒ API GW ⇒ Lambda function to SNS topic publish (need to restrict)
+
+* Website in S3 bucket ⇒ API GW(OK so far) ⇒ Lambda function ⇒ Modify the data #
+* ⇒ Put data into DynamoDB table
+* ⇒ Send e-mail notification to my address

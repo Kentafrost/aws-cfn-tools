@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "IAM Role for Lambda function with access to S3 buckets"
+
+# Parameters:
+  # S3EndpointId:
+  #   Type: AWS::SSM::Parameter::Value<String>
+  #   Default: /S3EndpointId
+
+Resources:
+
+  # Lambda Execution Role
+  BasicLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "lambda-basic-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        
+
+  # ECR Lambda Execution Role
+  ECRLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "lambda-ecr-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+  # DynamoDB Lambda Execution Role
+  DynamoDBLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "lambda-dynamodb-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+  # API Gateway Lambda Execution Role
+  ApiGwLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "lambda-api-gateway-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+
+  BasicLambdaRoleSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "BasicLambdaRole"
+      Type: String
+      Value: !Ref BasicLambdaRole
+
+  LambdaRoleECRSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "LambdaECRExecutionRole"
+      Type: String
+      Value: !Ref ECRLambdaRole
+
+  DynamoDBLambdaRoleSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "DynamoDBLambdaRole"
+      Type: String
+      Value: !Ref DynamoDBLambdaRole
+
+  ApiGwLambdaRoleSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "ApiGwLambdaRole"
+      Type: String
+      Value: !Ref ApiGwLambdaRole

@@ -5,9 +5,6 @@ Parameters:
   CodeS3Bucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /CodeS3BucketName
-  LambdaExecutionRoleArn:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /LambdaExecutionRole
   ErrorSNSTriggerTopicArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /ErrorLambdaSNSTopic
@@ -25,10 +22,10 @@ Resources:
       Handler: main.handler
       Code:
         S3Bucket: !Ref CodeS3Bucket
-        S3Key: "test/error_sendmsg.zip" 
+        S3Key: "lambda/zip/error_sendmsg.zip" 
       Timeout: 30
       MemorySize: 128
-      Role: !Ref LambdaExecutionRoleArn
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/lambda-basic-role"
       Environment:
         Variables:
           ACCOUNT_ID: !Ref AWS::AccountId

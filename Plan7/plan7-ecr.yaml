@@ -11,7 +11,7 @@ Resources:
   ECRRegistry:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: "plan7-ecr-check-instances"
+      RepositoryName: "plan7-ecr-all-objects"
       ImageScanningConfiguration:
         scanOnPush: true
       LifecyclePolicy:

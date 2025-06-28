@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "IAM policy for Lambda functions to access resources"
+
+Parameters:
+  BasicLambdaRole:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: BasicLambdaRole
+
+  DynamoECRExecutionRole:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: LambdaECRExecutionRole
+
+  DynamoDBLambdaRole:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: DynamoDBLambdaRole
+
+  ApiGwLambdaRole:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: ApiGwLambdaRole
+
+Resources:
+
+  EC2CheckInstancesPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "EC2CheckInstancesPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowEC2CheckInstances
+            Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeInstanceStatus
+              - ec2:StartInstances
+              - ec2:StopInstances
+            Resource: "*"
+
+          - Sid: SendMsgToSNS
+            Effect: Allow
+            Action: sns:Publish
+            Resource: 
+              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+      Roles:
+        - !Ref BasicLambdaRole
+        - !Ref DynamoECRExecutionRole
+
+  LambdaS3AccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaS3AccessPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # after creating S3 Endpoint, then comment this in
+          - Sid: AllowLambdaS3Access
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:DeleteObject
+              - s3:ListBucket
+            Resource:
+              - 'arn:aws:s3:::lambda-apse2-bucket1313' # plan1
+              - 'arn:aws:s3:::lambda-apse2-bucket1313/*' # plan1
+              - 'arn:aws:s3:::web-apse2-bucket1313' # plan2
+              - 'arn:aws:s3:::web-apse2-bucket1313/*' # plan2
+            Condition:
+              StringEquals:
+                aws:AccountId: !Ref AWS::AccountId
+            # Condition:
+            #   StringEquals:
+            #     aws:SourceVpce: !Ref S3EndpointId
+      Roles:
+        - !Ref BasicLambdaRole
+        - !Ref DynamoECRExecutionRole
+
+  ECRLambdaPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "ECRLambdaAccessPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowECRAccess
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+            Resource: "*"
+          - Sid: AllowSendMsgToSNS
+            Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: 
+              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+      Roles:
+        - !Ref DynamoECRExecutionRole
+
+  LambdaDynamoDBPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "LambdaDynamoDBAccessPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowLambdaDynamoDBAccess
+            Effect: Allow
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Scan
+            Resource: 
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/plan2-dynamodb-tbl'
+            # Condition:
+              # StringEquals:
+                # aws:AccountId: !Ref AWS::AccountId
+
+          - Sid: SendMsgToSNS
+            Effect: Allow
+            Action: sns:Publish
+            Resource: 
+              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+      Roles:
+        - !Ref ApiGwLambdaRole
+        - !Ref DynamoDBLambdaRole
+        

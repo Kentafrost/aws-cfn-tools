@@ -19,8 +19,8 @@ Resources:
   ECRLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: "plan7-ecr-chkinstances-function"
-      Role: !Ref LambdaECRRoleArn
+      FunctionName: "plan7-ecr-s3objects-function"
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/lambda-ecr-role"
       PackageType: Image
       Code:
         ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ecrRepositoryName}:latest"

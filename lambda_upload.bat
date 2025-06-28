@@ -14,10 +14,13 @@ powershell -Command "Compress-Archive -Path .\Plan2\apse2\lambda\main.py -Destin
 powershell -Command "Compress-Archive -Path .\Plan3\lambda\main.py -DestinationPath .\Plan3\error_sendmsg.zip -Force"
 powershell -Command "Compress-Archive -Path .\Plan5\lambda\main.py -DestinationPath .\Plan5\ec2_check_instances.zip -Force"
 
-aws s3 cp .\Plan1\apse2\s3_access_lambda.zip s3://code-apse2-bucket1313/test/
-aws s3 cp .\Plan2\apse2\api_lambda.zip s3://code-apse2-bucket1313/test/
-aws s3 cp .\Plan3\error_sendmsg.zip s3://code-apse2-bucket1313/test/
-aws s3 cp .\Plan5\ec2_check_instances.zip s3://code-apse2-bucket1313/test/
+rem zip file path
+set ZIPFILEPATH=s3://code-apse2-bucket1313/lambda/zip
+
+aws s3 cp .\Plan1\apse2\s3_access_lambda.zip %ZIPFILEPATH%/s3_access_lambda.zip
+aws s3 cp .\Plan2\apse2\api_lambda.zip %ZIPFILEPATH%/api_lambda.zip
+aws s3 cp .\Plan3\error_sendmsg.zip %ZIPFILEPATH%/error_sendmsg.zip
+aws s3 cp .\Plan5\ec2_check_instances.zip %ZIPFILEPATH%/ec2_check_instances.zip
 
 rem If you'd like to check all files in a S3 bucket for storing all zip files for Lambda functions.
-aws s3 ls s3://code-apse2-bucket1313/test/
+aws s3 ls %ZIPFILEPATH%

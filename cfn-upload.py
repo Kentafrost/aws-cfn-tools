@@ -32,10 +32,15 @@ if __name__ == "__main__":
     s3_key = 'yaml/AAA.yaml'
     
     local_file_path = './Plan7/AAA.yaml'
-    upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
+    # upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
     sleep(5)
     
-    stack_name = local_file_path.split('/')[-1].replace('.yaml', '')
+    stack_name = local_file_path.replace('.yaml', '')
+    stack_name = stack_name.replace('./', '')
+    stack_name = stack_name.replace('/', '-')
+    stack_name = stack_name.lower()
+    print(f"Stack name: {stack_name}")
+    
     template_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
     if not os.path.exists(local_file_path):
