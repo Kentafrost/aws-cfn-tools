@@ -25,8 +25,8 @@ Resources:
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy # CWAgentで監視用ポリシー
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore # SSMパラメータに書き込む用ポリシー
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy # To monitor
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore # managements by SSM
       Policies:
         - PolicyName: S3AndDynamoDBAccess
           PolicyDocument:

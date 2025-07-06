@@ -5,59 +5,40 @@
     <title>Invoke Lambda via API Gateway</title>
 </head>
 <body>
-    <h1>Invoke Lambda Function</h1>
+    <h2> Make a new article</h2>
+    <button onclick="goToPage()">Go to Another Page</button>
+
+    <script>
+    function goToPage() {
+        window.location.href = 'create_newpage.html';
+    }
+    </script>
+
+    <h2> List up all objects in S3 bucket</h2>
+    <button onclick="listup_all_objects()">List up all S3 objects</button>
+    <div id="display"></div>
+    <pre id="result"></pre>
+    
+
+    <br>
+        <h1>Send a questionaire to author</h1>
+    </br>
+    
     <input type="text" id="name" placeholder="Enter name">
     <input type="text" id="email" placeholder="Enter email">
     <input type="text" id="phone" placeholder="Enter phone number">
     <input type="text" id="question" placeholder="Enter your question">
-    
-    <button onclick="invokeLambda()">Invoke Lambda</button>
+
+
+    <button onclick="SendQuestionaire(
+        document.getElementById('name').value,
+        document.getElementById('email').value,
+        document.getElementById('phone').value,
+        document.getElementById('question').value
+    )">Send Questionaire to Author</button>
+
     <div id="display"></div>
     <pre id="result"></pre>
-
-    <script>
-        async function invokeLambda() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const question = document.getElementById('question').value;
-            
-            if (!name || !email || !phone || !question) {
-                document.getElementById('result').textContent = "Please fill in all fields.";
-                return;
-            }
-
-            document.getElementById('display').innerHTML = `
-                <strong>Name:</strong> ${name}<br> 
-                <strong>Email:</strong> ${email}<br> 
-                <strong>Phone:</strong> ${phone}<br> 
-                <strong>Question:</strong> ${question}<br>
-                <strong>Timestamp:</strong> ${new Date().toISOString()}
-                `;
-
-            const apiUrl = "https://cnbsc2kjbe.execute-api.ap-southeast-2.amazonaws.com/prod/lambda"; // Replace with your API Gateway endpoint
-            document.getElementById('result').textContent = "Invoking...";
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        phone,
-                        question
-                    })
-                });
-
-                const data = await response.json();
-                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
-            } catch (error) {
-                document.getElementById('result').textContent = "Error: " + error;
-            }
-        }
-    </script>
+    <script src="listup_all_objects.js"></script>
 </body>
 </html>

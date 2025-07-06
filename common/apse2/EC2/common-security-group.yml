@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "test of constructing S3 bucket"
+
+Parameters:
+  Vpc:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /VPC
+  MyIpAddress:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /MyIpAddress
+
+Resources:
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Lambda_SG
+      GroupDescription: "Security group for Lambda function accessing S3 through VPC endpoint"
+      VpcId: !Ref Vpc
+      SecurityGroupEgress:
+        - IpProtocol: -1 # TCP
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: LambdaSecurityGroup
+
+  # SNS Endpoint Security Group but not used
+  SNSEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SNSEndpoint_SG
+      GroupDescription: "Security group for SNS endpoint"
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp # TCP
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+      Tags:
+        - Key: Name
+          Value: SNSEndpointSecurityGroup
+
+  # EC2 Instace Security Groups
+  PublicEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Public_SG
+      GroupDescription: Public Security Groups Setting
+      VpcId: !Ref Vpc
+
+      SecurityGroupIngress:
+        
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 3389
+          CidrIp: !Sub "${MyIpAddress}/32" # allow access from MyIP]
+          Description: "Allow SSH/RDP traffic from My IP"
+
+        - FromPort: 22
+          ToPort: 3389
+          IpProtocol: tcp
+          CidrIp: 172.20.11.0/24 # to Private Subnet1]
+          Description: "Allow SSH/RDP traffic from Private Subnet1"
+
+        - FromPort: 22
+          ToPort: 3389
+          IpProtocol: tcp
+          CidrIp: 172.20.12.0/24 # to Private Subnet2
+          Description: "Allow SSH/RDP traffic from Private Subnet2"
+
+        # for web access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: "Allow HTTP traffic from anywhere"
+
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: "Allow HTTPS traffic from anywhere"
+
+      SecurityGroupEgress:
+        - IpProtocol: -1 # All traffic
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0 # allow all outbound traffic
+
+  PrivateEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Private_SG
+      GroupDescription: To be able to access only Public and VPC Endpoints allocated services
+      VpcId: !Ref Vpc
+
+      SecurityGroupIngress:
+        # allow access from Public Subnet1 and Subnet2
+        - FromPort: 22
+          ToPort: 3389
+          IpProtocol: tcp
+          CidrIp: 172.20.1.0/24 # to Public Subnet1
+          Description: "Allow SSH/RDP traffic from Public Subnet1"
+          
+        - FromPort: 22
+          ToPort: 3389
+          IpProtocol: tcp
+          CidrIp: 172.20.2.0/24 # to Public Subnet2
+          Description: "Allow SSH/RDP traffic from Public Subnet2"
+
+        # for ping
+        - FromPort: 8
+          ToPort: -1
+          IpProtocol: icmp
+          CidrIp: 172.20.1.0/24 # to Public Subnet1
+          Description: "Allow ICMP traffic from Subnet1"
+          
+        - FromPort: 8
+          ToPort: -1
+          IpProtocol: icmp
+          CidrIp: 172.20.2.0/24 # to Public Subnet2
+          Description: "Allow ICMP traffic from Subnet2"
+
+      SwecurityGroupEgress:
+        - IpProtocol: -1 # All traffic
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0/0 # allow all outbound traffic
+
+
+  # SSM Parameters for Security Groups
+  SSMPublicEC2SecurityGroup:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PublicEC2SecurityGroup"
+      Type: String
+      Value: !Ref PublicEC2SecurityGroup
+
+  SSMPrivateSecurityGroup:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "PrivateEC2SecurityGroup"
+      Type: String
+      Value: !Ref PrivateEC2SecurityGroup
+
+  LambdaSecurityGroupSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "LambdaSecurityGroup"
+      Type: String
+      Value: !Ref LambdaSecurityGroup

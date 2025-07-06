@@ -1,0 +1,200 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "To enable access to S3 buckets from Private Subnet, using Lambda function"
+
+Parameters:
+  gmailAddress:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /my_main_gmail_address
+
+  phonenumber:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /my_main_tel_number
+    Description: "Phone number to receive SMS notification"
+
+  ErrorLambdaName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /ErrorLambdaFunctionName
+    Description: "ARN of the Lambda function to send SNS message when Lambda function is failed"
+
+Resources:
+  # ===================================
+  # basic SNS message invoked
+  basicLambdaSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: lambda-send-sns-topic
+      DisplayName: "Basic SNS Topic to send SNS message from Lambda function"
+
+  basicLambdaTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref basicLambdaSNSTopic ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+                - s3.amazonaws.com
+            Action: "SNS:Publish"
+            Resource: !Ref basicLambdaSNSTopic
+
+  basicLambdaSNSTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref basicLambdaSNSTopic
+      Protocol: email
+      Endpoint: !Ref gmailAddress
+
+  # ===================================
+  # invoked by the cloudwatch event, no Lambda function related
+  CWInvokeLambdaTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: CW-invoke-lambda-topic
+      DisplayName: "SNS Topic to invoke Lambda function by CloudWatch Event"
+
+  # CWInvokeLambdaTopicPolicy:
+  #   Type: AWS::SNS::TopicPolicy
+  #   Properties:
+  #     Topics: !Ref CWInvokeLambdaTopic
+  #     PolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal: 
+  #             AWS: "arn:aws:iam::${AWS::AccountId}:*"
+  #           Action: "Lambda:InvokeFunction"
+  #           Resource: !Ref CWInvokeLambdaTopic
+
+  # # Lambda function to be invoked by CloudWatch Event and send e-mail via SNS topic
+  # CWInvokeLambdaSubscription:
+  #   Type: AWS::SNS::Subscription
+  #   Properties:
+  #     TopicArn: !Ref CWInvokeLambdaTopic
+  #     Protocol: Lambda
+  #     Endpoint: !Ref CWLambdaArn 
+
+  # ===================================
+  # Error SNS topic invoked when Lambda function is failed
+  ErrorLambdaSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: cw-error-lambda-sns-topic
+      DisplayName: "Error SNS Topic when Lambda function is failed to invoke other Lambda function"
+
+  ErrorLambdaTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref ErrorLambdaSNSTopic ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "SNS:Publish"
+            Resource: !Ref ErrorLambdaSNSTopic
+            
+  ErrorSNSTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref ErrorLambdaSNSTopic
+      Protocol: Lambda
+      Endpoint: !Sub arn:aws:lambda:ap-southeast-2:${AWS::AccountId}:function:${ErrorLambdaName}
+      # invoke Lambda function to send lambda SNS topic
+  
+  # ===================================
+  # Error mail address list that has more addresses
+  ErrorMailAddressSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: error-mail-address-sns-topic
+      DisplayName: "Error Mail Address SNS Topic"
+
+  ErrorMailAddressLambdaTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref ErrorMailAddressSNSTopic ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: "SNS:Publish"
+            Resource: !Ref ErrorMailAddressSNSTopic
+
+  ErrorMailAddressSNSTopicSubscription1:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref ErrorMailAddressSNSTopic
+      Protocol: email
+      Endpoint: !Ref gmailAddress
+
+  ErrorMailAddressSNSTopicSubscription2:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref ErrorMailAddressSNSTopic
+      Protocol: SMS
+      Endpoint: !Ref phonenumber
+
+  # DLM Notifications SNS Topic
+  DLMNotificationsSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: dlm-notifications-sns-topic
+      DisplayName: "DLM Notifications SNS Topic"
+
+  DLMNotificationsSNSTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref DLMNotificationsSNSTopic ]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - events.amazonaws.com
+            Action: "SNS:Publish"
+            Resource: !Ref DLMNotificationsSNSTopic
+
+  DLMNotificationsSNSTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DLMNotificationsSNSTopic
+      Protocol: email
+      Endpoint: !Ref gmailAddress
+
+  # ===================================
+  # SSM Parameter
+
+  SSMbasicSNSTopic:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /basicSNSTopic
+      Type: String
+      Value: !Ref basicLambdaSNSTopic
+    
+  SSMCWInvokeLambdaTopic:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /CWInvokeLambdaTopic
+      Type: String
+      Value: !Ref CWInvokeLambdaTopic
+  
+  SSMErrorLambdaSNSTopic: 
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ErrorLambdaSNSTopic
+      Type: String
+      Value: !Ref ErrorLambdaSNSTopic
+
+  SSMErrorMailAddressSNSTopic:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ErrorMailAddressSNSTopic
+      Type: String
+      Value: !Ref ErrorMailAddressSNSTopic

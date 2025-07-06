@@ -4,20 +4,73 @@ import os
 import time
 
 def handler(event, context):
-    
+    action = None
+    body = {}
+
+    # Check if the event has a body
     if event.get("body"):
-        body = json.loads(event["body"])
-        # Extract data from the request body
-        name = body.get("name")
-        email = body.get("email")
-        phone = body.get("phone")
-        question = body.get("question")
+        try:
+            body = json.loads(event["body"])
+            action = body.get("action")
+        except Exception:
+            action = None
+
+        # handle different functions based on the action
+        if action == "listup_all_objects":
+            print("Action is to list up all objects in S3 bucket.")
+            return listup_all_objects(event, context)
         
-        # Log the received data
-        print(f"Received data: Name={name}, Email={email}, Phone={phone}, Question={question}")
+        elif action == "send_questionaire":
+            print("Action is to send questionaire.")
+            return send_questionaire(event, context)
+
     else:
         print("No body found in the event. Please check the request format.")
         print("Event:", event)    
+
+
+
+# I cannot the following function in the javascript file in HTML file so trigger in the Lambda function
+def listup_all_objects(event, context):
+    s3 = boto3.client('s3')
+    bucket_name = os.environ.get('WebS3BUCKET')
+    
+    if not bucket_name:
+        raise ValueError("S3 bucket name is not set.")
+    
+    try:
+        response = s3.list_objects_v2(Bucket=bucket_name)
+        if 'Contents' in response:
+            objects = [obj['Key'] for obj in response['Contents']]
+        else:
+            objects = []
+        
+        return {
+            "statusCode": 200,
+            "body": json.dumps(objects),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            }
+        }
+    except Exception as e:
+        print(f"Error listing objects in S3 bucket {bucket_name}: {e}")
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }   
+    
+def send_questionaire(event, context):
+    # Extract data from the request body
+    body = json.loads(event["body"])
+
+    name = body.get("name")
+    email = body.get("email")
+    phone = body.get("phone")
+    question = body.get("question")
+    
+    # Log the received data
+    print(f"Received data: Name={name}, Email={email}, Phone={phone}, Question={question}")
 
     created_at = int(time.time())
 
