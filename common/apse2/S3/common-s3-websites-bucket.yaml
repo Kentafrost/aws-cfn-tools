@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "To enable access to S3 buckets from Private Subnet, using Lambda function"
+Description: "Create an S3 bucket for Websites"
 
 Resources:
   # S3 Bucket for Lambda function

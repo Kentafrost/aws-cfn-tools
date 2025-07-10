@@ -1,4 +1,4 @@
-from time import sleep
+import time
 import boto3
 import os
 import pandas as pd
@@ -16,11 +16,17 @@ def upload_yaml_to_s3(bucket_name, s3_key, local_file_path):
 # upload into CloudFormation stack
 def upload_to_cloudformation_stack(stack_name, template_url):
     cloudformation_client = boto3.client('cloudformation')
-    try:
+    
+    check = input(f"Do you want to create CloudFormation stack {stack_name} with template URL {template_url}? (y/n): ")
+    if check.lower() != 'y':
+        print("Stack creation aborted.")
+        return {'status': 'aborted', 'stack_name': stack_name}
+    
+    try:    
         cloudformation_client.create_stack(
             StackName=stack_name,
             TemplateURL=template_url,
-            Capabilities=['CAPABILITY_IAM']
+            Capabilities=['CAPABILITY_IAM'],
             RoleARN='arn:aws:iam::204806963442:role/role_cloudformation_test'  # Replace with your IAM role ARN
         )
         print(f"CloudFormation stack {stack_name} created successfully.")
@@ -38,7 +44,14 @@ if __name__ == "__main__":
     
     bucket_name = 'code-apse2-bucket1313'
     df = pd.read_csv('./yaml_deploy_list.csv')
-    
+    current_time = time.strftime("%Y-%m-%d_%H-%M")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    service = 'cloudformation'
+
+    log_file_path = os.path.join(f'{current_dir}\log\{service}', f'{current_time}.csv')
+    if not os.path.exists(os.path.dirname(log_file_path)):
+        os.makedirs(os.path.dirname(log_file_path))
+
     stack_status_list = []
     # get yaml files name from csv file
     for index, row in df.iterrows():
@@ -48,10 +61,10 @@ if __name__ == "__main__":
         local_file_path = f"./{local_folder_name}/{local_file_name}"
         
         s3_key = f"yaml/{local_folder_name}/{local_file_name}"
-        #upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
-        
-        sleep(5)
-    
+        upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
+
+        time.sleep(5)
+
         stack_name = local_file_path.replace('.yaml', '')
         stack_name = stack_name.replace('./', '')
         stack_name = stack_name.replace('/', '-')
@@ -66,7 +79,15 @@ if __name__ == "__main__":
         
         status = upload_to_cloudformation_stack(stack_name, template_url)
         stack_status_list.append(status)
-        sleep(5)
+        time.sleep(5)
     
     print("All stacks processed.")
     print(stack_status_list)
+
+    with open(log_file_path, 'w') as f:
+        f.write("time_stamp, Stack Status Log\n")
+        f.write("================, ==================\n")
+        
+        for status in stack_status_list:
+            current_time = pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')
+            f.write(f"{current_time}, {status}\n")

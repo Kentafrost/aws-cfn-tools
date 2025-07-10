@@ -10,7 +10,7 @@ def handler(event, context):
 
     objects = []
     for obj in response.get('Contents', []):
-        print(obj['Key'])]
+        print(obj['Key'])
         objects.append(obj['Key'])
     print(f"Objects in bucket {bucket_name}: {objects}")
 

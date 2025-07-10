@@ -20,6 +20,9 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Sid: SourceBucketPermissions
+                Condition:
+                  StringEquals:
+                    aws:SourceAccount: !Ref AWS::AccountId
                 Effect: Allow
                 Action:
                   - s3:GetObjectVersion
@@ -31,12 +34,12 @@ Resources:
                   - s3:PutObject
                   - s3:PutObjectAcl
                 Resource:
-                  - 'arn:aws:s3:::lambda-apse2-bucket1313' # plan1
-                  - 'arn:aws:s3:::lambda-apse2-bucket1313/*' # plan1
-                  - 'arn:aws:s3:::web-apse2-bucket1313' # plan2
-                  - 'arn:aws:s3:::web-apse2-bucket1313/*' # plan2
+                  - 'arn:aws:s3:::*'
 
               - Sid: ReplicationToDestinationBucket
+                Condition:
+                  StringEquals:
+                    aws:SourceAccount: !Ref AWS::AccountId
                 Effect: Allow
                 Action:
                   - s3:PutObject
@@ -45,10 +48,7 @@ Resources:
                   - s3:ReplicateDelete
                   - s3:ReplicateTags
                 Resource:
-                  - 'arn:aws:s3:::lambda-apne1-backup-bucket1313' # plan1
-                  - 'arn:aws:s3:::lambda-apne1-backup-bucket1313/*' # plan1
-                  - 'arn:aws:s3:::web-apne1-backup-bucket1313' # plan2
-                  - 'arn:aws:s3:::web-apne1-backup-bucket1313/*' # plan2
+                  - 'arn:aws:s3:::*'
 
   # Store the replication role ARN in SSM Parameter Store
   S3RoleSSM:

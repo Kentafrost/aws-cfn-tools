@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create ALB for EC2 instances"
+
+Parameters:
+  PublicSubnets:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicSubnet
+  ALBSecurityGroup:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicEC2SecurityGroup
+  Vpc:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /VPC
+
+Resources:
+  Plan8ALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: !Sub "${AWS::StackName}-alb"
+      Subnets: !Ref PublicSubnets
+      SecurityGroups: !Ref ALBSecurityGroup
+      Scheme: internet-facing
+
+  Plan8ALBTargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: !Sub "${AWS::StackName}-tg"
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref Vpc
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
+
+  Plan8ALBTargetGroupAttachment:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroupAttachment"
+    Properties:
+      TargetGroupArn: !Ref Plan8ALBTargetGroup
+      TargetIpAddress: 
+        - 172.10.0.0/32 # replace instances ID
+        - 172.10.0.1/32 # replace instances ID
+        - 172.10.0.2/32 # replace instances ID
+      Port: 80
+
+  Plan8ALBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      LoadBalancerArn: !Ref Plan8ALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref Plan8ALBTargetGroup
+
+  Plan8ALBListenerRule:
+    DependsOn: Plan8ALBListener
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      ListenerArn: !Ref Plan8ALBListener
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /*
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref Plan8ALBTargetGroup
+  
+  Plan8ALBSSMParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /Plan8ALB
+      Type: String
+      Value: !Ref Plan8ALB  

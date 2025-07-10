@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Create eventbridge rule to trigger Lambda function for EC2 instance checks"
+Description: "Create eventbridge rule"
 
 Parameters:
   EcrlambdaFunctionName:
@@ -7,7 +7,7 @@ Parameters:
     Default: "/ECRLambdaFunctionName"
 
 Resources:
-  # Check everyday for EC2 instances and trigger Lambda function
+
   EcrEc2CheckInstancesEventRule:
     Type: AWS::Events::Rule
     Properties:
