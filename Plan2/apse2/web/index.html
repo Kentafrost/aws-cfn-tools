@@ -19,7 +19,7 @@
     <div id="display"></div>
     <pre id="result"></pre>
     
-
+    
     <br>
         <h1>Send a questionaire to author</h1>
     </br>
@@ -29,16 +29,11 @@
     <input type="text" id="phone" placeholder="Enter phone number">
     <input type="text" id="question" placeholder="Enter your question">
 
-
-    <button onclick="SendQuestionaire(
-        document.getElementById('name').value,
-        document.getElementById('email').value,
-        document.getElementById('phone').value,
-        document.getElementById('question').value
-    )">Send Questionaire to Author</button>
+    <button onclick="SendQuestionaire_php()">Send Questionnaire to Author</button>
 
     <div id="display"></div>
     <pre id="result"></pre>
-    <script src="listup_all_objects.js"></script>
+    <script src="invoke_lambda.js"></script>
+
 </body>
 </html>

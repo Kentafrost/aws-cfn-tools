@@ -27,13 +27,11 @@ if __name__ == "__main__":
     else:
         # choose an instance from the list with 1, 2, 3, etc
         print("Available running instances:")
-        for index, instance_id in enumerate(instance_id_list, start=1):
-            print(f"{index}. {instance_id}")
-        selected_instance_id = input("Select an instance to create an AMI (enter instance ID): ")
         
         try:
             for instance_id in instance_id_list:
-                if instance_id == selected_instance_id:
+                check = input(f"Do you want to create an AMI from instance {instance_id}? (yes/no): ").strip().lower()
+                if check == "yes":
                     print(f"Creating AMI for instance: {instance_id}")
 
                     # Create an AMI from the specified instance

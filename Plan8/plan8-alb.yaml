@@ -2,9 +2,13 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "Create ALB for EC2 instances"
 
 Parameters:
-  PublicSubnets:
+  PublicSubnet:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: /PublicSubnet
+    Default: /PublicSubnet1
+  PublicSubnet2:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicSubnet2
+
   ALBSecurityGroup:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /PublicEC2SecurityGroup
@@ -17,7 +21,9 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
     Properties:
       Name: !Sub "${AWS::StackName}-alb"
-      Subnets: !Ref PublicSubnets
+      Subnets: 
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
       SecurityGroups: !Ref ALBSecurityGroup
       Scheme: internet-facing
 

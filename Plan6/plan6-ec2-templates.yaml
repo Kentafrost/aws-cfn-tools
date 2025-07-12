@@ -2,27 +2,49 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "EC2 Fleet with Launch Template"
 
 Parameters:
-  PublicEC2SecurityGroup:
+  PublicSubnet:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicSubnet1
+  PublicSecurityGroup:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /PublicEC2SecurityGroup
-
-  PrivateEC2SecurityGroup:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /PrivateEC2SecurityGroup
-
   PublicKeyPair:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /PublicKeypair
+  PublicEC2InstanceProfile:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /PublicEC2InstanceProfile
 
 Resources:
-
-  PublicLaunchTemplate:
+  
+  PublicEC2LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: "PublicEC2Template"
       LaunchTemplateData:
-        ImageId: "ami-0f14d0949beaa4f7e"  # Replace with your AMI ID
+        ImageId: "ami-08b26451ed3e0ef79"
         InstanceType: "t3.micro"
         SecurityGroupIds:
-          - !Ref PublicEC2SecurityGroup
+          - !Ref PublicSecurityGroup
         KeyName: !Ref PublicKeyPair
+        IamInstanceProfile: !Ref PublicEC2InstanceProfile
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: PatchGroup
+                Value: WindowsFleet
+
+  PublicEC2AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PublicSubnet
+      LaunchTemplate:
+        LaunchTemplateId: !Ref PublicEC2LaunchTemplate
+        Version: !GetAtt PublicEC2LaunchTemplate.LatestVersionNumber
+      MinSize: 3 # Number of instances to launch
+      MaxSize: 3
+      DesiredCapacity: 3
+      Tags:
+        - Key: PatchGroup
+          Value: WindowsFleet
+          PropagateAtLaunch: true
