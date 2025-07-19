@@ -60,6 +60,10 @@ Resources:
         TopicConfigurations:
           - Event: s3:ObjectCreated:Put
             Topic: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+          # put event trigger the lambda function
+      LambdaConfigurations:
+        - Event: s3:ObjectCreated:Put
+          Function: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:part2-lambda-data-modification"
 
   WebS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"

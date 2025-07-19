@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Create a Lambda function with access to an S3 bucket triggered by API Gateway"
+Description: "Lambda function to input data into DynamoDB"
 
 Parameters:
   VpcId:

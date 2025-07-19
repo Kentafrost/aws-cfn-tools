@@ -73,7 +73,6 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
 
-
   BasicLambdaRoleSSM:
     Type: AWS::SSM::Parameter
     Properties:

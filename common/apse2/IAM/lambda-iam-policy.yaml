@@ -20,6 +20,24 @@ Parameters:
 
 Resources:
 
+  SendMsgPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "SendMsgToSNSPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: SendMsgToSNS
+            Effect: Allow
+            Action: sns:Publish
+            Resource: 
+              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
+      Roles:
+        - !Ref BasicLambdaRole
+        - !Ref DynamoECRExecutionRole
+        - !Ref DynamoDBLambdaRole
+        - !Ref ApiGwLambdaRole
+
   EC2CheckInstancesPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -35,12 +53,6 @@ Resources:
               - ec2:StartInstances
               - ec2:StopInstances
             Resource: "*"
-
-          - Sid: SendMsgToSNS
-            Effect: Allow
-            Action: sns:Publish
-            Resource: 
-              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
       Roles:
         - !Ref BasicLambdaRole
         - !Ref DynamoECRExecutionRole
@@ -74,6 +86,7 @@ Resources:
       Roles:
         - !Ref BasicLambdaRole
         - !Ref DynamoECRExecutionRole
+        - !Ref DynamoDBLambdaRole
 
   ECRLambdaPolicy:
     Type: AWS::IAM::Policy
@@ -89,12 +102,6 @@ Resources:
               - ecr:BatchGetImage
               - ecr:GetDownloadUrlForLayer
             Resource: "*"
-          - Sid: AllowSendMsgToSNS
-            Effect: Allow
-            Action:
-              - sns:Publish
-            Resource: 
-              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
       Roles:
         - !Ref DynamoECRExecutionRole
 
@@ -118,12 +125,6 @@ Resources:
             # Condition:
               # StringEquals:
                 # aws:AccountId: !Ref AWS::AccountId
-
-          - Sid: SendMsgToSNS
-            Effect: Allow
-            Action: sns:Publish
-            Resource: 
-              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:lambda-send-sns-topic"
       Roles:
         - !Ref ApiGwLambdaRole
         - !Ref DynamoDBLambdaRole

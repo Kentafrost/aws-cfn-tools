@@ -1,4 +1,4 @@
-# correct data and modify the data, save it to the csv, then save into S3 bucket
+# triggered by S3 put event, modify the data, save it to the csv, then save into S3 bucket
 import pandas as pd
 import boto3
 import os
