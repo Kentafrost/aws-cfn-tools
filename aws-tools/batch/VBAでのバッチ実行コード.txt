@@ -1,0 +1,21 @@
+Sub TEST1()
+    
+    With CreateObject("Wscript.Shell")
+        '新規のメモ帳を起動
+        .Run "C:\Users\kenta\OneDrive\デスクトップ\VBA、バッチ\abc"
+    End With
+    
+End Sub
+
+Private Sub CommandButton1_Click()
+
+    MsgBox "バッチ処理を実施します。"
+    
+    'バッチ処理+引数入れるパターン
+
+  With CreateObject("Wscript.Shell")
+    
+    .Run "C:\Users\kenta\OneDrive\デスクトップ\VBA、バッチ\abc" & " " & 10 & " " & 100
+    End With
+
+End Sub

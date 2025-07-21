@@ -22,14 +22,14 @@ if __name__ == "__main__":
 
     try:
         s3_client = boto3.client('s3')
-        s3_client.download_file(s3_bucket_name, s3_file_key, './csv/dynamodb_data.csv')
+        s3_client.download_file(s3_bucket_name, s3_file_key, './dynamodb_data.csv')
     except Exception as e:
         print(f"Error downloading file from S3: {e}")
         exit(1)
 
-    table_name = 'plan4-dynamodb-table'
+    table_name = 'plan2-dynamodb-tbl'
 
-    df = pd.read_csv('./csv/dynamodb_data.csv')
+    df = pd.read_csv('./dynamodb_data.csv')
 
     for index, row in df.iterrows():
         
