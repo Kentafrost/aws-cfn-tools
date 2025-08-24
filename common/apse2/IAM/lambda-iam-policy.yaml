@@ -121,10 +121,12 @@ Resources:
               - dynamodb:DeleteItem
               - dynamodb:Scan
             Resource: 
-              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/plan2-dynamodb-tbl'
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/http-data-table'
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/notification-log-table'
+              # - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/login-data-table'
             # Condition:
-              # StringEquals:
-                # aws:AccountId: !Ref AWS::AccountId
+            #   StringEquals:
+            #     aws:AccountId: !Ref AWS::AccountId
       Roles:
         - !Ref ApiGwLambdaRole
         - !Ref DynamoDBLambdaRole

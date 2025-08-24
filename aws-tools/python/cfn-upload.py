@@ -3,21 +3,21 @@ import boto3
 import os
 import pandas as pd
 
-def upload_yaml_to_s3(bucket_name, s3_key, local_file_path):
-    s3_client = boto3.client('s3')
-    try:
-        s3_client.upload_file(local_file_path, bucket_name, s3_key)
-        print(f"File {local_file_path} uploaded to S3 bucket {bucket_name} with key {s3_key}.")
+# def upload_yaml_to_s3(bucket_name, s3_key, local_file_path):
+#     s3_client = boto3.client('s3')
+#     try:
+#         s3_client.upload_file(local_file_path, bucket_name, s3_key)
+#         print(f"File {local_file_path} uploaded to S3 bucket {bucket_name} with key {s3_key}.")
 
-    except Exception as e:
-        print(f"Error uploading file to S3: {e}")
-        raise
+#     except Exception as e:
+#         print(f"Error uploading file to S3: {e}")
+#         raise
     
 # upload into CloudFormation stack
-def upload_to_cloudformation_stack(stack_name, template_url):
+def upload_to_cloudformation_stack(stack_name, local_file_path):
     cloudformation_client = boto3.client('cloudformation')
     
-    check = input(f"Do you want to create CloudFormation stack {stack_name} with template URL {template_url}? (y/n): ")
+    check = input(f"Do you want to create CloudFormation stack {stack_name} with local file {local_file_path}? (y/n): ")
     if check.lower() != 'y':
         print("Stack creation aborted.")
         return {'status': 'aborted', 'stack_name': stack_name}
@@ -25,7 +25,7 @@ def upload_to_cloudformation_stack(stack_name, template_url):
     try:    
         cloudformation_client.create_stack(
             StackName=stack_name,
-            TemplateURL=template_url,
+            TemplateBody=open(local_file_path, 'r').read(),
             Capabilities=['CAPABILITY_IAM'],
             RoleARN='arn:aws:iam::204806963442:role/role_cloudformation_test'  # Replace with your IAM role ARN
         )
@@ -60,8 +60,8 @@ if __name__ == "__main__":
         local_file_name = f"{row['file_name']}"
         local_file_path = f"./{local_folder_name}/{local_file_name}"
         
-        s3_key = f"yaml/{local_folder_name}/{local_file_name}"
-        upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
+        # s3_key = f"yaml/{local_folder_name}/{local_file_name}"
+        # upload_yaml_to_s3(bucket_name, s3_key, local_file_path)
 
         time.sleep(5)
 
@@ -71,13 +71,13 @@ if __name__ == "__main__":
         stack_name = stack_name.lower()
         print(f"Stack name: {stack_name}")
         
-        template_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
+        # template_url = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
         if not os.path.exists(local_file_path):
             print(f"File {local_file_path} does not exist.")
             exit(1)
         
-        status = upload_to_cloudformation_stack(stack_name, template_url)
+        status = upload_to_cloudformation_stack(stack_name, local_file_path)
         stack_status_list.append(status)
         time.sleep(5)
     
