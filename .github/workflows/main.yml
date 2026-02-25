@@ -36,7 +36,7 @@ jobs:
               --template-file "$file" \
               --stack-name "$stack_name" \
               --capabilities CAPABILITY_NAMED_IAM \
-              --role-arn arn:aws:iam::204806963442:role/role_cloudformation_test
+              --role-arn arn:aws:iam::204806963442:role/role_cloudformation_test \
               --no-fail-on-empty-changeset
 
           done < changed_files.txt
