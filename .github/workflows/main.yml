@@ -34,11 +34,22 @@ jobs:
             stack_name=$(basename "$file" .yaml)
             echo "Deploying $stack_name from $file"
 
+            set +e
             aws cloudformation deploy \
               --template-file "$file" \
               --stack-name "$stack_name" \
               --capabilities CAPABILITY_NAMED_IAM \
               --role-arn arn:aws:iam::204806963442:role/role_cloudformation_test \
               --no-fail-on-empty-changeset
+            set -e
+            
+            if [ $result -ne 0 ]; then 
+              echo "Deployment failed for $stack_name" 
+              echo "=== CloudFormation Failure Logs ===" 
+              aws cloudformation describe-stack-events \ 
+                --stack-name "$stack_name" \ 
+                --max-items 20 
+              exit 1
+            fi
 
           done < changed_files.txt
