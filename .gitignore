@@ -1,0 +1,149 @@
+**/__pycache__/**
+**/.github/**
+**/.vscode/**
+**/.idea/**
+**/*.csv
+**/log/**
+**/*.json
+**/old/**
+
+# Dependencies
+**/node_modules/
+.pnp
+.pnp.js
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/venv/
+log/
+
+# Environment files
+**/.env*
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+.env.staging
+
+# Logs and databases  
+**/*.log
+**/*.sqlite*
+**/*.sqlite3
+**/*.db
+
+
+# Credentials and secrets
+*credentials*
+*credential*
+*token*
+*token.pickle
+*secret*
+*api_key*
+*apikey*
+*secret_key*
+*access_token*
+*refresh_token*
+*password*
+*passwd*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+*.truststore
+*aws_credentials*
+*aws_secret*
+*aws_access*
+
+# AWS and SSH
+.aws/
+**/.aws/
+**/aws/credentials
+**/aws/config
+**/.ssh/
+**/id_rsa*
+**/id_dsa*
+**/id_ecdsa*
+**/id_ed25519*
+**/.gnupg/
+**/.gpg
+**/private_key*
+**/public_key*
+**/master.key
+**/keyfile*
+
+# Config and data files
+**/*.json
+**/*.csv
+**/*.ini
+**/*.cfg
+**/config/
+config.ini
+config.cfg
+settings.json
+**/database.yml
+**/database.json
+**/*rakuten*.csv
+
+# IDE and editor files
+**/.vscode/
+.vscode/
+**/.idea/
+**/*.sublime-project
+**/*.sublime-workspace
+
+# Temporary and backup files
+**/*.tmp
+**/*.temp
+**/tmp/
+**/temp/
+**/*.bak
+**/*.backup
+**/*.orig
+**/*.swp
+**/*.swo
+**/*~
+**/#*#
+**/.#*
+**/*.pid
+**/*.lock
+
+# Cache and session files
+**/.cache/
+**/cache/
+**/sessions/
+
+# Docker
+**/.dockerignore
+**/docker-compose.override.yml
+**/Dockerfile.local
+**/.docker/
+
+# Cloud and deployment
+**/.terraform/
+**/*.tfstate*
+**/*.tfvars
+**/terraform.tfvars*
+**/.pulumi/
+**/.serverless/
+**/serverless.yml
+**/.kubectl/
+**/.kube/config
+
+# Project specific files
+**/memo.txt
+**/old/
+**/**/old/**
+**/secret_path.py
+secret_path.py
+**/search_words.py
+
+# macOS
+**/.DS_Store
