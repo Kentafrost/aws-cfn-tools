@@ -41,14 +41,13 @@ jobs:
               --capabilities CAPABILITY_NAMED_IAM \
               --role-arn arn:aws:iam::204806963442:role/role_cloudformation_test \
               --no-fail-on-empty-changeset
+            result=$?
             set -e
             
             if [ $result -ne 0 ]; then 
               echo "Deployment failed for $stack_name" 
               echo "=== CloudFormation Failure Logs ===" 
-              aws cloudformation describe-stack-events \ 
-                --stack-name "$stack_name" \ 
-                --max-items 20 
+              aws cloudformation describe-stack-events --stack-name "$stack_name"
               exit 1
             fi
 
