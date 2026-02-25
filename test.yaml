@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Test SSM parameters for CloudWatch alarm validation"
+
+Resources:
+
+  TestWebS3BucketName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/Test/WebS3BucketName"
+      Type: String
+      Value: "test-web-bucket"
+
+  TestErrorSNSTopic:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/Test/ErrorLambdaSNSTopic"
+      Type: String
+      Value: "arn:aws:sns:ap-southeast-2:123456789012:TestTopic"
+
+Outputs:
+  TestWebS3BucketName:
+    Value: !Ref TestWebS3BucketName
+  TestErrorSNSTopic:
+    Value: !Ref TestErrorSNSTopic
