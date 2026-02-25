@@ -1,0 +1,38 @@
+name: AWS-Deployment-Auto
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::204806963442:role/role-github-actions-deploy-auto
+          aws-region: ap-southeast-2
+
+      - name: Detect changed Cfn files
+        id: changed
+        run: |
+          git diff --name-only HEAD~1 HEAD | grep ".yaml" > changed_files.txt || true
+
+      - name: Deploy each Cfn file
+        run: |
+          while read file; do
+            stack_name=$(basename "$file" .yaml)
+            echo "Deploying $stack_name from $file"
+
+            aws cloudformation deploy \
+              --template-file "$file" \
+              --stack-name "$stack_name" \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --role-arn arn:aws:iam::204806963442:role/role_cloudformation_test
+              --no-fail-on-empty-changeset
+
+          done < changed_files.txt
