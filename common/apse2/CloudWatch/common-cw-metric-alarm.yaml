@@ -24,26 +24,26 @@ Mappings:
 
 Resources:
 
-  # Lambda functions
+  # ■ Lambda functions
 
   # ==============================
   # Plan2
   ApiGwLambdaMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
-      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Plan2, Lambda, Name ] ] ]
+      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Lambda, Plan2, Name ] ] ]
       FilterPattern: "ERROR"  # Empty string matches all logs; customize as needed
       MetricTransformations:
         - MetricValue: "1"
           MetricNamespace: "Custom/Lambda/Plan2"
           MetricName: "DetectedErrors"
-      FilterName: !Join [ "", [ !FindInMap [ Plan2, Lambda, Name ], "-LogFilter" ] ]
+      FilterName: !Join [ "", [ !FindInMap [ Lambda, Plan2, Name ], "-LogFilter" ] ]
 
   # Log Alarm to invoke SNS topic for error notifications
   ApiGwLambdaLogAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: !Join [ "", [ !FindInMap [ Plan2, Lambda, Name ], "-ErrorAlarm" ] ]
+      AlarmName: !Join [ "", [ !FindInMap [ Lambda, Plan2, Name ], "-ErrorAlarm" ] ]
       MetricName: DetectedErrors
       Namespace: Custom/Lambda/Plan2 # same to the defined MetricNamespace in MetricFilter
       Statistic: Sum
@@ -59,19 +59,19 @@ Resources:
   EC2CheckInstancesLambdaMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
-      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Plan5, Lambda, Name ] ] ]
+      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Lambda, Plan5, Name ] ] ]
       FilterPattern: "ERROR"  # Empty string matches all logs; customize as needed
       MetricTransformations:
         - MetricValue: "1"
           MetricNamespace: "Custom/Lambda/Plan5"
           MetricName: "DetectedErrors"
-      FilterName: !Join [ "", [ !FindInMap [ Plan5, Lambda, Name ], "-LogFilter" ] ]
+      FilterName: !Join [ "", [ !FindInMap [ Lambda, Plan5, Name ], "-LogFilter" ] ]
 
   # Log Alarm to invoke SNS topic for error notifications
   EC2CheckInstancesLambdaLogAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: !Join [ "", [ !FindInMap [ Plan5, Lambda, Name ], "-ErrorAlarm" ] ]
+      AlarmName: !Join [ "", [ !FindInMap [ Lambda, Plan5, Name ], "-ErrorAlarm" ] ]
       MetricName: DetectedErrors
       Namespace: Custom/Lambda/Plan5
       Statistic: Sum
@@ -87,19 +87,19 @@ Resources:
   Plan7EcrLambdaMetricFilter:
     Type: AWS::Logs::MetricFilter
     Properties:
-      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Plan7, Lambda, Name ] ] ]
+      LogGroupName: !Join [ "", [ "/aws/lambda/", !FindInMap [ Lambda, Plan7, Name ] ] ]
       FilterPattern: "ERROR"  # Empty string matches all logs; customize as needed
       MetricTransformations:
         - MetricValue: "1"
           MetricNamespace: "Custom/Lambda/Plan7Ecr"
           MetricName: "DetectedErrors"
-      FilterName: !Join [ "", [ !FindInMap [ Plan7, Lambda, Name ], "-LogFilter" ] ]
+      FilterName: !Join [ "", [ !FindInMap [ Lambda, Plan7, Name ], "-LogFilter" ] ]
 
   # Log Alarm to invoke SNS topic for error notifications
   Plan7EcrLambdaLogAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: !Join [ "", [ !FindInMap [ Plan7, Lambda, Name ], "-ErrorAlarm" ] ]
+      AlarmName: !Join [ "", [ !FindInMap [ Lambda, Plan7, Name ], "-ErrorAlarm" ] ]
       MetricName: DetectedErrors
       Namespace: Custom/Lambda/Plan7Ecr
       Statistic: Sum
