@@ -10,6 +10,12 @@ let currentDotSource = "";
 let yamlFiles = [];
 let selectedFilePaths = new Set();
 
+function getFileName(filePath) {
+    const normalized = String(filePath).replace(/\\/g, "/");
+    const parts = normalized.split("/");
+    return parts[parts.length - 1] || normalized;
+}
+
 function formatResourceNames(file) {
     const resources = Array.isArray(file.resources) ? file.resources : [];
     if (!resources.length) {
@@ -25,6 +31,23 @@ function formatResourceNames(file) {
     }
 
     return names.join(", ");
+}
+
+function summarizeResourceNames(file, limit = 8) {
+    const resources = Array.isArray(file?.resources) ? file.resources : [];
+    const names = resources
+        .map((resource) => resource.logicalId)
+        .filter(Boolean);
+
+    if (!names.length) {
+        return ["No resources"];
+    }
+
+    if (names.length <= limit) {
+        return names;
+    }
+
+    return [...names.slice(0, limit), `... +${names.length - limit} more`];
 }
 
 function escapeDot(value) {
@@ -85,7 +108,8 @@ function buildFilterOptions() {
             <label class="file-option">
                 <input type="checkbox" name="fileFilter" value="${file.path}" ${checked}>
                 <span class="file-label">
-                    <span class="file-path">${file.path}</span>
+                    <span class="file-path">${getFileName(file.path)}</span>
+                    <span class="file-meta">Path: ${file.path}</span>
                     <span class="file-meta">Resources: ${file.resourceCount}</span>
                     <span class="file-meta">Resource names: ${formatResourceNames(file)}</span>
                 </span>
@@ -128,14 +152,20 @@ function buildFilteredGraph() {
     dotLines.push("  splines=true;");
     dotLines.push('  node [shape=box, style="rounded,filled", fillcolor="#EAF2FF", color="#4A6FA5", fontname="Helvetica"];');
 
+    const fileSummaryByPath = new Map(mapData.files.map((file) => [file.path, file]));
+
     for (const node of resources) {
-        const label = `${node.logicalId}\\n${node.type}\\n${node.file}`;
+        const label = `${node.logicalId}\\n${node.type}\\n${getFileName(node.file)}`;
         dotLines.push(`  "${escapeDot(node.id)}" [shape=box, style="rounded,filled", fillcolor="#EAF2FF", color="#4A6FA5", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);
     }
 
     for (const node of templates) {
-        const label = `Template\\n${node.file}`;
-        dotLines.push(`  "${escapeDot(node.id)}" [shape=folder, style="filled", fillcolor="#FFF4DE", color="#B28629", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);
+        const file = fileSummaryByPath.get(node.file);
+        const resourceNames = summarizeResourceNames(file);
+        const labelLines = [getFileName(node.file), "Resources", ...resourceNames];
+        const label = labelLines.join("\\n");
+        dotLines.push(`  "${escapeDot(node.id)}" [shape=folder, style="filled", fillcolor="#FFF4DE", color="#B28629", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];
+`);
     }
 
     for (const edge of edges) {

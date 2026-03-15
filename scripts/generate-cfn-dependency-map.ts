@@ -72,6 +72,38 @@ function escapeDot(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
+function getFileName(filePath: string): string {
+  const normalized = normalizePathForId(filePath);
+  const parts = normalized.split('/');
+  return parts[parts.length - 1] || normalized;
+}
+
+function summarizeResourceNames(resources: Array<{ logicalId: string; type: string }>, limit = 8): string[] {
+  if (!resources.length) {
+    return ['No resources'];
+  }
+
+  const names = resources
+    .map((resource) => resource.logicalId)
+    .filter(Boolean);
+
+  if (names.length <= limit) {
+    return names;
+  }
+
+  return [...names.slice(0, limit), `... +${names.length - limit} more`];
+}
+
+function buildTemplateLabel(filePath: string, resources: Array<{ logicalId: string; type: string }>): string {
+  const fileName = getFileName(filePath);
+  const resourceLines = summarizeResourceNames(resources);
+  return [fileName, 'Resources', ...resourceLines].join('\\n');
+}
+
+function getFileSummaryByPath(mapJson: { files: FileSummary[] }, filePath: string): FileSummary | undefined {
+  return mapJson.files.find((file) => file.path === filePath);
+}
+
 function resolvePartFromFile(filePath: string): string {
   if (filePath.startsWith('common/')) {
     return 'Common';
@@ -177,14 +209,44 @@ function renderVisualizationHtml(
     '    };',
     '',
     '    function escapeDot(value) {',
-    '      return String(value).replace(/\\/g, "\\\\").replace(/\"/g, "\\\"");',
+    '      return String(value)',
+    '        .replaceAll(String.fromCharCode(92), String.fromCharCode(92, 92))',
+    '        .replaceAll(String.fromCharCode(34), String.fromCharCode(92) + String.fromCharCode(34));',
     '    }',
     '',
     '    function resolvePart(filePath) {',
     '      if (filePath.startsWith("common/")) return "Common";',
-    '      const match = filePath.match(/^(Plan\\d+)\//);',
+    '      const match = filePath.match(/^(Plan\\d+)\\//);',
     '      if (match) return match[1];',
     '      return "Other";',
+    '    }',
+    '',
+    '    function getFileName(filePath) {',
+    '      const normalized = String(filePath).replace(/\\\\/g, "/");',
+    '      const parts = normalized.split("/");',
+    '      return parts[parts.length - 1] || normalized;',
+    '    }',
+    '',
+    '    function summarizeResourceNames(resources, limit = 8) {',
+    '      if (!Array.isArray(resources) || !resources.length) return ["No resources"];',
+    '      const names = resources.map((resource) => resource.logicalId).filter(Boolean);',
+    '      if (names.length <= limit) return names;',
+    '      return [...names.slice(0, limit), `... +${names.length - limit} more`];',
+    '    }',
+    '',
+    '    function getFileSummary(filePath) {',
+    '      return mapData.files.find((file) => file.path === filePath);',
+    '    }',
+    '',
+    '    function buildTemplateLabel(filePath) {',
+    '      const file = getFileSummary(filePath);',
+    '      const lines = [getFileName(filePath), "Resources"];',
+    '      if (!file || !Array.isArray(file.resources) || !file.resources.length) {',
+    '        lines.push("No resources");',
+    '        return lines.join("\\n");',
+    '      }',
+    '      lines.push(...summarizeResourceNames(file.resources));',
+    '      return lines.join("\\n");',
     '    }',
     '',
     '    function collectSelectedParts() {',
@@ -257,14 +319,14 @@ function renderVisualizationHtml(
     '        const part = resolvePart(node.file);',
     '        const fill = getPartColor(part);',
     '        const border = part === "Other" ? "#64748b" : "#e2e8f0";',
-    '        const label = `${node.logicalId}\\n${node.type}\\n${node.file}`;',
+    '        const label = `${node.logicalId}\\n${node.type}\\n${getFileName(node.file)}`;',
     '        dotLines.push(`  "${escapeDot(node.id)}" [shape=box, style="rounded,filled", fillcolor="${fill}", color="${border}", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);',
     '      }',
     '',
     '      for (const node of templates) {',
     '        const part = resolvePart(node.file);',
     '        const fill = getPartColor(part);',
-    '        const label = `Template\\n${node.file}`;',
+    '        const label = buildTemplateLabel(node.file);',
     '        dotLines.push(`  "${escapeDot(node.id)}" [shape=folder, style="filled", fillcolor="${fill}", color="#e2e8f0", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);',
     '      }',
     '',
@@ -749,14 +811,16 @@ async function main(): Promise<void> {
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
   for (const node of resourceNodes) {
-    const label = `${node.logicalId}\\n${node.type}\\n(${node.file})`;
+        const label = `${node.logicalId}\\n${node.type}\\n(${getFileName(node.file)})`;
     const width = Math.max(220, Math.min(420, label.length * 5));
     dagreGraph.setNode(node.id, { label, width, height: 74 });
   }
   for (const fileNode of fileNodes.values()) {
-    const label = `Template\\n${fileNode.file}`;
+    const summary = getFileSummaryByPath({ files: fileSummaries }, fileNode.file);
+    const label = buildTemplateLabel(fileNode.file, summary?.resources ?? []);
     const width = Math.max(220, Math.min(420, label.length * 5));
-    dagreGraph.setNode(fileNode.id, { label, width, height: 58 });
+    const height = Math.max(58, 26 + label.split('\\n').length * 16);
+    dagreGraph.setNode(fileNode.id, { label, width, height });
   }
   for (const edge of edges) {
     dagreGraph.setEdge(edge.from, edge.to);
@@ -808,12 +872,13 @@ async function main(): Promise<void> {
 
   for (const node of resourceNodes) {
     const id = escapeDot(node.id);
-    const label = escapeDot(`${node.logicalId}\\n${node.type}\\n${node.file}`);
+    const label = escapeDot(`${node.logicalId}\\n${node.type}\\n${getFileName(node.file)}`);
     dotLines.push(`  "${id}" [label="${label}"];`);
   }
   for (const fileNode of fileNodes.values()) {
     const id = escapeDot(fileNode.id);
-    const label = escapeDot(`Template\\n${fileNode.file}`);
+    const summary = getFileSummaryByPath({ files: fileSummaries }, fileNode.file);
+    const label = escapeDot(buildTemplateLabel(fileNode.file, summary?.resources ?? []));
     dotLines.push(`  "${id}" [shape=folder, fillcolor="#FFF4DE", color="#B28629", label="${label}"];`);
   }
 
