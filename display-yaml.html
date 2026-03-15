@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CloudFormationテンプレートのYAMLファイルの相関</title>
-
-<body>
+    <title>CloudFormation YAML File Relationships and Resource Names</title>
     <style>
         :root {
             color-scheme: light dark;
@@ -82,14 +80,28 @@
             background: #334155;
         }
 
-        .part-grid {
-            display: grid;
-            gap: 8px;
+        .search-box {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            border: 1px solid #64748b;
+            background: #0f172a;
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 8px;
         }
 
-        .part-option {
+        .file-grid {
+            display: grid;
+            gap: 8px;
+            max-height: 460px;
+            overflow: auto;
+            padding-right: 2px;
+        }
+
+        .file-option {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
             padding: 8px 10px;
             border: 1px solid var(--border);
@@ -97,15 +109,27 @@
             background: var(--panel-soft);
         }
 
-        .part-option input {
-            margin: 0;
+        .file-option input {
+            margin: 2px 0 0;
         }
 
-        .part-swatch {
-            width: 12px;
-            height: 12px;
-            border-radius: 999px;
-            flex: 0 0 auto;
+        .file-label {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .file-path {
+            display: block;
+            color: var(--text);
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .file-meta {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         .summary {
@@ -144,11 +168,12 @@
             }
         }
     </style>
-
-    各partのYAMLファイルの相関は以下のファイルを参照ください。
-    <h1>CloudFormationテンプレートのYAMLファイル相関</h1>
-    <p>relation-map の解析結果を読み込み、part 単位で YAML テンプレート間の依存関係を絞り込み表示します。</p>
-    <p><a href="relation-map/cfn-resource-graph.html" target="_blank" rel="noopener noreferrer">詳細ビューを別タブで開く</a></p>
+</head>
+<body>
+    Explore YAML file relationships and resource names by searching and narrowing the detected templates.
+    <h1>CloudFormation YAML File Relationships and Resource Names</h1>
+    <p>This page loads the relation-map analysis, lets you search across every detected YAML file, and renders the filtered dependency graph together with the related resource names.</p>
+    <p><a href="relation-map/cfn-resource-graph.html" target="_blank" rel="noopener noreferrer">Open the detailed viewer in a new tab</a></p>
 
     <div class="layout">
         <div class="sidebar">
@@ -158,11 +183,12 @@
                     <button id="btnSelectNone">Clear</button>
                     <button id="btnRender">Apply Filter</button>
                 </div>
-                <div id="partFilters" class="part-grid"></div>
+                <input id="fileSearch" class="search-box" type="search" placeholder="Search by YAML file name or path">
+                <div id="fileFilters" class="file-grid"></div>
             </div>
 
             <div class="panel">
-                <div class="summary" id="selectionSummary">読み込み中...</div>
+                <div class="summary" id="selectionSummary">Loading...</div>
             </div>
 
             <div class="panel">
@@ -182,237 +208,6 @@
     <script src="https://unpkg.com/viz.js@2.1.2/viz.js" type="application/javascript"></script>
     <script src="https://unpkg.com/viz.js@2.1.2/full.render.js" type="application/javascript"></script>
     <script src="relation-map/cfn-resource-map.js" type="application/javascript"></script>
-    <script>
-        const graphEl = document.getElementById("graph");
-        const statusEl = document.getElementById("status");
-        const partFiltersEl = document.getElementById("partFilters");
-        const selectionSummaryEl = document.getElementById("selectionSummary");
-
-        const planPalette = ["#34d399", "#f59e0b", "#f87171", "#a78bfa", "#22d3ee", "#fb7185", "#4ade80", "#facc15"];
-        const partColors = {
-            Common: "#60a5fa",
-            Other: "#94a3b8"
-        };
-
-        let mapData = null;
-        let renderedSvg = null;
-        let currentDotSource = "";
-
-        function escapeDot(value) {
-            return String(value).replace(/\\/g, "\\\\").replace(/\"/g, "\\\"");
-        }
-
-        function resolvePart(filePath) {
-            if (filePath.startsWith("common/")) {
-                return "Common";
-            }
-            const match = filePath.match(/^(Plan\d+)\//);
-            if (match) {
-                return match[1];
-            }
-            return "Other";
-        }
-
-        function collectSelectedParts() {
-            return Array.from(document.querySelectorAll("input[name=partFilter]:checked")).map((input) => input.value);
-        }
-
-        function getPartColor(part) {
-            if (partColors[part]) {
-                return partColors[part];
-            }
-            const match = part.match(/^Plan(\d+)$/);
-            if (match) {
-                const index = Number(match[1]) - 1;
-                return planPalette[((index % planPalette.length) + planPalette.length) % planPalette.length];
-            }
-            return partColors.Other;
-        }
-
-        function getSortedParts(partCounts) {
-            return Array.from(partCounts.keys()).sort((left, right) => {
-                if (left === right) {
-                    return 0;
-                }
-                if (left === "Common") {
-                    return -1;
-                }
-                if (right === "Common") {
-                    return 1;
-                }
-                if (left === "Other") {
-                    return 1;
-                }
-                if (right === "Other") {
-                    return -1;
-                }
-                const leftMatch = left.match(/^Plan(\d+)$/);
-                const rightMatch = right.match(/^Plan(\d+)$/);
-                if (leftMatch && rightMatch) {
-                    return Number(leftMatch[1]) - Number(rightMatch[1]);
-                }
-                if (leftMatch) {
-                    return -1;
-                }
-                if (rightMatch) {
-                    return 1;
-                }
-                return left.localeCompare(right, "ja");
-            });
-        }
-
-        function buildFilterOptions() {
-            const partCounts = new Map();
-            for (const file of mapData.files) {
-                const part = file.part || resolvePart(file.path);
-                partCounts.set(part, (partCounts.get(part) || 0) + 1);
-            }
-
-            const availableParts = getSortedParts(partCounts);
-            partFiltersEl.innerHTML = availableParts.map((part) => {
-                const count = partCounts.get(part) || 0;
-                const checked = part !== "Other" ? "checked" : "";
-                const color = getPartColor(part);
-                return `
-                    <label class="part-option">
-                        <input type="checkbox" name="partFilter" value="${part}" ${checked}>
-                        <span class="part-swatch" style="background:${color}"></span>
-                        <span>${part} (${count} files)</span>
-                    </label>
-                `;
-            }).join("");
-        }
-
-        function buildFilteredGraph() {
-            const selectedParts = new Set(collectSelectedParts());
-            const visibleFileIds = new Set();
-            const visibleResourceIds = new Set();
-
-            const templates = mapData.nodes.templates.filter((node) => selectedParts.has(node.part || resolvePart(node.file)));
-            const resources = mapData.nodes.resources.filter((node) => selectedParts.has(node.part || resolvePart(node.file)));
-
-            for (const node of templates) {
-                visibleFileIds.add(node.id);
-            }
-            for (const node of resources) {
-                visibleResourceIds.add(node.id);
-            }
-
-            const edges = mapData.edges.filter((edge) => {
-                const fromVisible = visibleFileIds.has(edge.from) || visibleResourceIds.has(edge.from);
-                const toVisible = visibleFileIds.has(edge.to) || visibleResourceIds.has(edge.to);
-                return fromVisible && toVisible;
-            });
-
-            const dotLines = [];
-            dotLines.push("digraph CloudFormationDependencies {");
-            dotLines.push("  rankdir=LR;");
-            dotLines.push("  overlap=false;");
-            dotLines.push("  splines=true;");
-
-            for (const node of resources) {
-                const part = node.part || resolvePart(node.file);
-                const fill = getPartColor(part);
-                const label = `${node.logicalId}\\n${node.type}\\n${node.file}`;
-                dotLines.push(`  "${escapeDot(node.id)}" [shape=box, style="rounded,filled", fillcolor="${fill}", color="#e2e8f0", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);
-            }
-
-            for (const node of templates) {
-                const part = node.part || resolvePart(node.file);
-                const fill = getPartColor(part);
-                const label = `Template\\n${node.file}`;
-                dotLines.push(`  "${escapeDot(node.id)}" [shape=folder, style="filled", fillcolor="${fill}", color="#e2e8f0", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);
-            }
-
-            for (const edge of edges) {
-                const label = edge.detail ? `${edge.kind}: ${edge.detail}` : edge.kind;
-                const color = edge.kind === "SSMParameterLink" ? "#f472b6" : edge.kind === "RefCrossFileUnique" ? "#fbbf24" : "#cbd5e1";
-                dotLines.push(`  "${escapeDot(edge.from)}" -> "${escapeDot(edge.to)}" [label="${escapeDot(label)}", color="${color}", fontcolor="${color}"];`);
-            }
-
-            dotLines.push("}");
-
-            selectionSummaryEl.innerHTML = [
-                `Selected parts: ${selectedParts.size ? Array.from(selectedParts).join(", ") : "none"}`,
-                `Visible templates: ${templates.length}`,
-                `Visible resources: ${resources.length}`,
-                `Visible edges: ${edges.length}`
-            ].join("<br>");
-
-            return dotLines.join("\n");
-        }
-
-        async function renderGraph() {
-            statusEl.textContent = "Rendering graph...";
-            graphEl.innerHTML = "";
-
-            try {
-                currentDotSource = buildFilteredGraph();
-
-                if (!currentDotSource.includes("[")) {
-                    renderedSvg = null;
-                    graphEl.innerHTML = `<div class="panel">No nodes match the selected parts.</div>`;
-                    statusEl.textContent = "";
-                    return;
-                }
-
-                const viz = new Viz();
-                const svgEl = await viz.renderSVGElement(currentDotSource);
-                renderedSvg = svgEl;
-                graphEl.appendChild(svgEl);
-                statusEl.textContent = "";
-            } catch (error) {
-                renderedSvg = null;
-                const message = error && error.message ? error.message : String(error);
-                statusEl.textContent = `Rendering failed (display-yaml): ${message}`;
-            }
-        }
-
-        async function initialize() {
-            statusEl.textContent = "relation-map の相関データを読み込み中...";
-            try {
-                if (window.CFN_RESOURCE_MAP) {
-                    mapData = window.CFN_RESOURCE_MAP;
-                } else {
-                    const response = await fetch("relation-map/cfn-resource-map.json", { cache: "no-store" });
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    mapData = await response.json();
-                }
-                buildFilterOptions();
-                await renderGraph();
-            } catch (error) {
-                const message = error && error.message ? error.message : String(error);
-                selectionSummaryEl.textContent = "読み込みに失敗しました。";
-                graphEl.innerHTML = `<div class="panel">relation-map の相関データの読み込みに失敗しました。</div>`;
-                statusEl.textContent = `Load failed (display-yaml): ${message}`;
-            }
-        }
-
-        document.getElementById("btnRender").addEventListener("click", () => {
-            if (mapData) {
-                renderGraph();
-            }
-        });
-
-        document.getElementById("btnSelectAll").addEventListener("click", () => {
-            document.querySelectorAll("input[name=partFilter]").forEach((input) => {
-                input.checked = true;
-            });
-            if (mapData) {
-                renderGraph();
-            }
-        });
-
-        document.getElementById("btnSelectNone").addEventListener("click", () => {
-            document.querySelectorAll("input[name=partFilter]").forEach((input) => {
-                input.checked = false;
-            });
-            if (mapData) {
-                renderGraph();
-            }
-        });
-
-        initialize();
-    </script>
+    <script src="filtering.js" type="application/javascript"></script>
+</body>
+</html>
