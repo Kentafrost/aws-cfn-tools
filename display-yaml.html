@@ -179,8 +179,8 @@
         <div id="graph"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/viz.js@3.12.0/viz.js" type="application/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/viz.js@3.12.0/full.render.js" type="application/javascript"></script>
+    <script src="https://unpkg.com/viz.js@2.1.2/viz.js" type="application/javascript"></script>
+    <script src="https://unpkg.com/viz.js@2.1.2/full.render.js" type="application/javascript"></script>
     <script src="relation-map/cfn-resource-map.js" type="application/javascript"></script>
     <script>
         const graphEl = document.getElementById("graph");
@@ -364,7 +364,7 @@
             } catch (error) {
                 renderedSvg = null;
                 const message = error && error.message ? error.message : String(error);
-                statusEl.textContent = `Rendering failed: ${message}`;
+                statusEl.textContent = `Rendering failed (display-yaml): ${message}`;
             }
         }
 
@@ -386,7 +386,7 @@
                 const message = error && error.message ? error.message : String(error);
                 selectionSummaryEl.textContent = "読み込みに失敗しました。";
                 graphEl.innerHTML = `<div class="panel">relation-map の相関データの読み込みに失敗しました。</div>`;
-                statusEl.textContent = `Load failed: ${message}`;
+                statusEl.textContent = `Load failed (display-yaml): ${message}`;
             }
         }
 

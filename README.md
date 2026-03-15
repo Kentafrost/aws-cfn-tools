@@ -132,7 +132,7 @@ npm run cfn:map
 - `cfn-resource-graph.html`: part別フィルタ付きの相関ビュー
 
 各partのYAMLファイルの相関は以下のファイルを参照ください。
-[display-yaml.html](display-yaml.html)
+[display-yaml.html](https://kentafrost.github.io/aws-cfn-tools/display-yaml.html)
 
 ### 基本デプロイメント
 ```bash
