@@ -2,9 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "Create a Lambda function with access to an S3 bucket"
 
 Parameters:
-  VpcId:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /VPC
   PrivSubnetId1:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /PrivateSubnet1
@@ -20,9 +17,6 @@ Parameters:
   CodeS3Bucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /CodeS3BucketName
-  LambdaExecutionRoleArn:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /LambdaExecutionRole
 
 Resources:
   MyLambdaFunction:
@@ -37,12 +31,12 @@ Resources:
         S3Key: "lambda/zip/s3_access_lambda.zip" 
       Timeout: 30
       MemorySize: 128
-      # VpcConfig:
-      #   SubnetIds:
-      #     - !Ref PrivSubnetId1
-      #     - !Ref PrivSubnetId2
-      #   SecurityGroupIds:
-      #     - !Ref SecurityGroupId
+      VpcConfig:
+        SubnetIds:
+          - !Ref PrivSubnetId1
+          - !Ref PrivSubnetId2
+        SecurityGroupIds:
+          - !Ref SecurityGroupId
       Environment:
         Variables:
           S3_BUCKET: !Ref LambdaS3BucketName

@@ -13,7 +13,6 @@ Parameters:
     Default: /S3EndpointId
   
 Resources:
-  # S3 Bucket for Lambda function
   lambdaS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -39,7 +38,7 @@ Resources:
           - Id: ReplicateToTokyo
             Status: Enabled
             Destination:
-              Bucket: 'arn:aws:s3:::lambda-apne1-backup-bucket1313'
+              Bucket: 'arn:aws:s3:::lambda-apne1-backup-bucket1313' # apne1 region
               StorageClass: STANDARD
 
   lambdaS3BucketPolicy:

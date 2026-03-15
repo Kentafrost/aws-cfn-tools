@@ -113,6 +113,27 @@ aws-cfn-tools/
 
 ## 🚀 使用方法
 
+### YAML相関マッピングの生成（TypeScript）
+
+CloudFormation YAML 全体の依存関係を `js-yaml + graphlib + dagre` で抽出し、
+目視確認用の JSON/DOT を生成できます。
+
+```bash
+npm install
+npm run cfn:map
+```
+
+生成物（`relation-map/`）:
+
+- `cfn-resource-map.json`: リソース、依存エッジ、SSMパラメータ連携、循環情報
+- `cfn-resource-graph.dot`: Graphviz で可視化可能なDOTファイル
+- `cfn-resource-layout.json`: dagre の座標レイアウト結果
+- `cfn-resource-graph.svg`: 静的に共有できるSVG画像
+- `cfn-resource-graph.html`: part別フィルタ付きの相関ビュー
+
+各partのYAMLファイルの相関は以下のファイルを参照ください。
+[display-yaml.html](display-yaml.html)
+
 ### 基本デプロイメント
 ```bash
 # 共通リソースのデプロイ

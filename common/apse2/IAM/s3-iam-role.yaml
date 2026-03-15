@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "IAM Role - S3 Replication Role for both Source and Destination"
+
+Resources:
+  # IAM Role for S3 Replication - Source Role
+  S3ReplicationSourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "S3ReplicationRole-Source"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: S3ReplicationPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: SourceBucketPermissions
+                Condition:
+                  StringEquals:
+                    aws:SourceAccount: !Ref AWS::AccountId
+                Effect: Allow
+                Action:
+                  - s3:GetObjectVersion
+                  - s3:GetObjectVersionAcl
+                  - s3:ReplicateObject
+                  - s3:ReplicateTags
+                  - s3:ListBucket
+                  - s3:GetBucketVersioning
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Resource:
+                  - 'arn:aws:s3:::*'
+
+              - Sid: ReplicationToDestinationBucket
+                Condition:
+                  StringEquals:
+                    aws:SourceAccount: !Ref AWS::AccountId
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                  - s3:ReplicateObject
+                  - s3:ReplicateDelete
+                  - s3:ReplicateTags
+                Resource:
+                  - 'arn:aws:s3:::*'
+
+  # IAM Role for S3 Replication - Destination Role
+  S3ReplicationDestinationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "S3ReplicationRole-Destination"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: S3ReplicationPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ReadSourceBucket
+                Effect: Allow
+                Action:
+                  - s3:GetObjectVersion
+                  - s3:GetObjectVersionAcl
+                  - s3:ListBucket
+                  - s3:GetBucketVersioning
+                Resource:
+                  - 'arn:aws:s3:::lambda-apse2-bucket1313'
+                  - 'arn:aws:s3:::lambda-apse2-bucket1313/*'
+                  - 'arn:aws:s3:::web-apse2-bucket1313'
+                  - 'arn:aws:s3:::web-apse2-bucket1313/*'
+
+              - Sid: WriteIntoDestinationBucket
+                Effect: Allow
+                Action:
+                  - s3:ReplicateObject
+                  - s3:ReplicateDelete
+                  - s3:ReplicateTags
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Resource:
+                  - 'arn:aws:s3:::lambda-apse1-backup-bucket1313'
+                  - 'arn:aws:s3:::lambda-apse1-backup-bucket1313/*'
+                  - 'arn:aws:s3:::web-apne1-backup-bucket1313'
+                  - 'arn:aws:s3:::web-apne1-backup-bucket1313/*'
+
+  # Store the replication role ARN in SSM Parameter Store
+  S3RoleSourceSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "S3ReplicationSourceRole"
+      Type: String
+      Value: !GetAtt S3ReplicationSourceRole.Arn
+
+  # Store the replication role ARN in SSM Parameter Store
+  S3RoleDestinationSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "S3ReplicationDestinationRole"
+      Type: String
+      Value: !GetAtt S3ReplicationDestinationRole.Arn

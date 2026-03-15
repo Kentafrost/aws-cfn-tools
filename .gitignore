@@ -2,10 +2,14 @@
 **/.github/**
 **/.vscode/**
 **/.idea/**
-**/*.csv
 **/log/**
-**/*.json
 **/old/**
+**/*.json
+**/*.csv
+!relation-map/
+!relation-map/*.json
+!relation-map/*.dot
+*/zip_package/*
 
 # Dependencies
 **/node_modules/
@@ -80,17 +84,11 @@ log/
 **/keyfile*
 
 # Config and data files
-**/*.json
-**/*.csv
 **/*.ini
 **/*.cfg
 **/config/
 config.ini
 config.cfg
-settings.json
-**/database.yml
-**/database.json
-**/*rakuten*.csv
 
 # IDE and editor files
 **/.vscode/

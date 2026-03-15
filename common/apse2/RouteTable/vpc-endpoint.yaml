@@ -14,17 +14,16 @@ Parameters:
   PrivateRoutetable:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /PrivateRouteTable
-  LambdaExecutionRoleArn:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /LambdaExecutionRole
-
-  #*************Endpoint*************
 
 Resources:
   # Access from Private Subnet and Lambda to S3
   S3Endpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId: !Ref Vpc
+      RouteTableIds:
+        - !Ref PrivateRoutetable
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -36,15 +35,14 @@ Resources:
             Condition:
               StringEquals:
                 aws:SourceVpc: !Ref Vpc
-          
-      RouteTableIds:
-        - !Ref PrivateRoutetable
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
-      VpcId: !Ref Vpc
 
   DynamoDBEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
+      VpcId: !Ref Vpc
+      RouteTableIds:
+        - !Ref PrivateRoutetable
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -55,10 +53,6 @@ Resources:
             Condition:
               StringEquals:
                 aws:SourceVpc: !Ref Vpc
-      RouteTableIds:
-        - !Ref PrivateRoutetable
-      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
-      VpcId: !Ref Vpc
 
   # SNS Endpoint
   SNSEndpoint:

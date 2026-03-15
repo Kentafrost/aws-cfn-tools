@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Test SSM parameters for CloudWatch alarm validation"
+Description: "SSM parameters for github action testing"
 
 Resources:
 

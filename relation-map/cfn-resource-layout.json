@@ -1,0 +1,1649 @@
+{
+  "nodes": [
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::ApiGwLambdaMetricFilter",
+      "x": 210,
+      "y": 37,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::ApiGwLambdaLogAlarm",
+      "x": 210,
+      "y": 151,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::EC2CheckInstancesLambdaMetricFilter",
+      "x": 210,
+      "y": 265,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::EC2CheckInstancesLambdaLogAlarm",
+      "x": 210,
+      "y": 379,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::Plan7EcrLambdaMetricFilter",
+      "x": 210,
+      "y": 493,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::Plan7EcrLambdaLogAlarm",
+      "x": 210,
+      "y": 607,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/CloudWatch/common-cw-metric-alarm.yaml::S3PutObjectAlarm",
+      "x": 210,
+      "y": 721,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::LambdaSecurityGroup",
+      "x": 710,
+      "y": 892,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::SNSEndpointSecurityGroup",
+      "x": 210,
+      "y": 835,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::PublicEC2SecurityGroup",
+      "x": 1210,
+      "y": 1177,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::PrivateEC2SecurityGroup",
+      "x": 710,
+      "y": 1063,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::SSMPublicEC2SecurityGroup",
+      "x": 710,
+      "y": 1177,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::SSMPrivateSecurityGroup",
+      "x": 210,
+      "y": 1063,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/common-security-group.yml::LambdaSecurityGroupSSM",
+      "x": 210,
+      "y": 949,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-keypair.yaml::PublicKeyPair",
+      "x": 1210,
+      "y": 1945.5,
+      "width": 345,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-keypair.yaml::PrivateKeyPair",
+      "x": 1210,
+      "y": 1348,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-keypair.yaml::SSMPublicKey",
+      "x": 710,
+      "y": 1291,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-keypair.yaml::SSMPrivateKey",
+      "x": 710,
+      "y": 1405,
+      "width": 355,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-setting-ssm.yaml::CWAgentConfig",
+      "x": 1210,
+      "y": 2176,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/ec2-setting-ssm.yaml::EC2ScriptsSSM",
+      "x": 1210,
+      "y": 2059.5,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/instance-profile.yaml::PublicEC2InstanceProfile",
+      "x": 1210,
+      "y": 2290,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/instance-profile.yaml::PrivateEC2InstanceProfile",
+      "x": 1210,
+      "y": 1519,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/instance-profile.yaml::SSMPublicEC2Instanceprofile",
+      "x": 710,
+      "y": 1519,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/EC2/instance-profile.yaml::SSMPrivateEC2Instanceprofile",
+      "x": 710,
+      "y": 1633,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/destination-s3-role.yaml::S3ReplicationRole",
+      "x": 710,
+      "y": 1861,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/destination-s3-role.yaml::S3RoleSSM",
+      "x": 210,
+      "y": 1861,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-policy.yaml::SendMsgPolicy",
+      "x": 210,
+      "y": 2840,
+      "width": 370,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-policy.yaml::EC2CheckInstancesPolicy",
+      "x": 210,
+      "y": 1975,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-policy.yaml::LambdaS3AccessPolicy",
+      "x": 210,
+      "y": 2089,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-policy.yaml::ECRLambdaPolicy",
+      "x": 210,
+      "y": 2203,
+      "width": 380,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-policy.yaml::LambdaDynamoDBPolicy",
+      "x": 210,
+      "y": 3125,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::BasicLambdaRole",
+      "x": 710,
+      "y": 2374,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::ECRLambdaRole",
+      "x": 710,
+      "y": 6186,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::DynamoDBLambdaRole",
+      "x": 710,
+      "y": 3484.5,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::ApiGwLambdaRole",
+      "x": 710,
+      "y": 3940.5,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::BasicLambdaRoleSSM",
+      "x": 210,
+      "y": 7257.5,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::LambdaRoleECRSSM",
+      "x": 210,
+      "y": 7485.5,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::DynamoDBLambdaRoleSSM",
+      "x": 210,
+      "y": 7762.5,
+      "width": 415,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/lambda-iam-role.yaml::ApiGwLambdaRoleSSM",
+      "x": 210,
+      "y": 8218.5,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/priv-ec2-iam-role.yaml::PrivateEC2Role",
+      "x": 1685,
+      "y": 2146,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/priv-ec2-iam-role.yaml::SSMPrivateEC2InstanceRole",
+      "x": 1210,
+      "y": 2847.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/public-ec2-iam-role.yaml::PublicEC2Role",
+      "x": 1685,
+      "y": 2518,
+      "width": 370,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/public-ec2-iam-role.yaml::SSMPublicEC2InstanceRole",
+      "x": 1210,
+      "y": 2961.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/s3-iam-role.yaml::S3ReplicationSourceRole",
+      "x": 710,
+      "y": 2146,
+      "width": 380,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/s3-iam-role.yaml::S3ReplicationDestinationRole",
+      "x": 710,
+      "y": 2260,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/s3-iam-role.yaml::S3RoleSourceSSM",
+      "x": 210,
+      "y": 3239,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/s3-iam-role.yaml::S3RoleDestinationSSM",
+      "x": 210,
+      "y": 3353,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/source-s3-role.yaml::S3ReplicationRole",
+      "x": 710,
+      "y": 2488,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/IAM/source-s3-role.yaml::S3RoleSSM",
+      "x": 210,
+      "y": 3524,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::PrivateRoutetable",
+      "x": 1210,
+      "y": 4446.5,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::NatGateway",
+      "x": 1210,
+      "y": 3075.5,
+      "width": 370,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::PrivateRouteToInternet",
+      "x": 710,
+      "y": 3028.5,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::AssoPrivSub1RT",
+      "x": 710,
+      "y": 3142.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::AssoPrivSub2RT",
+      "x": 710,
+      "y": 3256.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/priv-route.yml::SSMPrivRoutetable",
+      "x": 710,
+      "y": 3370.5,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::PublicRoutetable",
+      "x": 710,
+      "y": 3598.5,
+      "width": 415,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::InternetGateway",
+      "x": 710,
+      "y": 3712.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::AttachGateway",
+      "x": 210,
+      "y": 4694,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::PublicRoute",
+      "x": 210,
+      "y": 4466,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::AssoPubSub1RT",
+      "x": 210,
+      "y": 4238,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::AssoPubSub2RT",
+      "x": 210,
+      "y": 4352,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/public-route.yaml::SSMPublicRoutetable",
+      "x": 210,
+      "y": 4580,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::S3Endpoint",
+      "x": 710,
+      "y": 10249,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::DynamoDBEndpoint",
+      "x": 710,
+      "y": 10363,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::SNSEndpoint",
+      "x": 710,
+      "y": 3826.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::SSMS3Endpoint",
+      "x": 210,
+      "y": 10596.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::SSMDynamoDBEndpoint",
+      "x": 210,
+      "y": 10710.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/RouteTable/vpc-endpoint.yaml::SSMSNSEndpoint",
+      "x": 210,
+      "y": 4808,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-bucket.yaml::CodeS3Bucket",
+      "x": 710,
+      "y": 5036,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-bucket.yaml::CodeBucketPolicy",
+      "x": 210,
+      "y": 4979,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-bucket.yaml::CodeBucketSSM",
+      "x": 210,
+      "y": 5093,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-code-bucket.yaml::CodeS3Bucket",
+      "x": 710,
+      "y": 5264,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-code-bucket.yaml::CodeBucketPolicy",
+      "x": 210,
+      "y": 5207,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-code-bucket.yaml::CodeBucketSSM",
+      "x": 210,
+      "y": 5321,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-websites-bucket.yaml::EC2WebsitesS3Bucket",
+      "x": 710,
+      "y": 5673,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-websites-bucket.yaml::EC2WebsitesS3BucketPolicy",
+      "x": 210,
+      "y": 5492,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/S3/common-s3-websites-bucket.yaml::EC2WebsitesS3BucketSSM",
+      "x": 210,
+      "y": 5921,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::basicLambdaSNSTopic",
+      "x": 710,
+      "y": 7998,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::basicLambdaTopicPolicy",
+      "x": 210,
+      "y": 6035,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::basicLambdaSNSTopicSubscription",
+      "x": 210,
+      "y": 6573.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::CWInvokeLambdaTopic",
+      "x": 710,
+      "y": 6068.5,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorLambdaSNSTopic",
+      "x": 710,
+      "y": 7371,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorLambdaTopicPolicy",
+      "x": 210,
+      "y": 6801.5,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorSNSTopicSubscription",
+      "x": 210,
+      "y": 6915.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorMailAddressSNSTopic",
+      "x": 710,
+      "y": 7257,
+      "width": 385,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorMailAddressLambdaTopicPolicy",
+      "x": 210,
+      "y": 7029.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorMailAddressSNSTopicSubscription1",
+      "x": 210,
+      "y": 7143.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::ErrorMailAddressSNSTopicSubscription2",
+      "x": 210,
+      "y": 7371.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::DLMNotificationsSNSTopic",
+      "x": 710,
+      "y": 6590.5,
+      "width": 385,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::DLMNotificationsSNSTopicPolicy",
+      "x": 210,
+      "y": 7648.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::DLMNotificationsSNSTopicSubscription",
+      "x": 210,
+      "y": 7876.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::SSMbasicSNSTopic",
+      "x": 210,
+      "y": 13671.5,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::SSMCWInvokeLambdaTopic",
+      "x": 210,
+      "y": 6687.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::SSMErrorLambdaSNSTopic",
+      "x": 210,
+      "y": 10824.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/SNS/common-sns.yaml::SSMErrorMailAddressSNSTopic",
+      "x": 210,
+      "y": 10482.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::PublicSubnet1",
+      "x": 710,
+      "y": 7485,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::PublicSubnet2",
+      "x": 710,
+      "y": 7599,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::PrivateSubnet1",
+      "x": 710,
+      "y": 7770,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::PrivateSubnet2",
+      "x": 710,
+      "y": 7884,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::SSMPublicSubnet",
+      "x": 210,
+      "y": 7990.5,
+      "width": 385,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::SSMPublicSubnet2",
+      "x": 210,
+      "y": 8104.5,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::SSMPrivateSubnet",
+      "x": 210,
+      "y": 8332.5,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/common-subnet.yml::SSMPrivateSubnet2",
+      "x": 210,
+      "y": 8446.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::PublicSubnet1",
+      "x": 710,
+      "y": 8934,
+      "width": 325,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::PublicSubnet2",
+      "x": 710,
+      "y": 9048,
+      "width": 325,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::PrivateSubnet1",
+      "x": 710,
+      "y": 9162,
+      "width": 330,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::PrivateSubnet2",
+      "x": 710,
+      "y": 9276,
+      "width": 330,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::SSMPublicSubnet",
+      "x": 210,
+      "y": 8617.5,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::SSMPublicSubnet2",
+      "x": 210,
+      "y": 8731.5,
+      "width": 355,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::SSMPrivateSubnet",
+      "x": 210,
+      "y": 8845.5,
+      "width": 355,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/Subnet/subnet.yml::SSMPrivateSubnet2",
+      "x": 210,
+      "y": 8959.5,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/VPC/common-vpc.yml::Vpc",
+      "x": 710,
+      "y": 9390,
+      "width": 265,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/VPC/common-vpc.yml::SSMVpc",
+      "x": 210,
+      "y": 9073.5,
+      "width": 310,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/VPC/vpc.yml::Vpc",
+      "x": 710,
+      "y": 9504,
+      "width": 230,
+      "height": 74
+    },
+    {
+      "id": "res:common/apse2/VPC/vpc.yml::SSMVpc",
+      "x": 210,
+      "y": 9187.5,
+      "width": 275,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apne1/plan1-apne1-s3.yml::DestinationS3Bucket",
+      "x": 710,
+      "y": 9618,
+      "width": 350,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apne1/plan1-apne1-s3.yml::S3BucketPolicy",
+      "x": 210,
+      "y": 9301.5,
+      "width": 355,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apse2/plan1-apse2-s3.yaml::lambdaS3Bucket",
+      "x": 710,
+      "y": 9789,
+      "width": 330,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apse2/plan1-apse2-s3.yaml::lambdaS3BucketPolicy",
+      "x": 210,
+      "y": 9415.5,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apse2/plan1-apse2-s3.yaml::lambdaS3BucketSSM",
+      "x": 210,
+      "y": 9529.5,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:Plan1/apse2/plan1-lambda.yaml::MyLambdaFunction",
+      "x": 210,
+      "y": 9757.5,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::ApiToLambda",
+      "x": 1685,
+      "y": 5639.5,
+      "width": 335,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::ApiToLambdaResource",
+      "x": 1210,
+      "y": 5639.5,
+      "width": 380,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::ApiToLambdaMethod",
+      "x": 710,
+      "y": 5492,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::LambdaApiInvokePermission",
+      "x": 1210,
+      "y": 4560.5,
+      "width": 400,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::ApiToLambdaOptionsMethod",
+      "x": 710,
+      "y": 5787,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apigw.yaml::ApiDeployment",
+      "x": 210,
+      "y": 5639.5,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apse2-s3.yaml::WebS3Bucket",
+      "x": 710,
+      "y": 10131,
+      "width": 305,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apse2-s3.yaml::WebS3BucketPolicy",
+      "x": 210,
+      "y": 9871.5,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-apse2-s3.yaml::WebS3BucketSSM",
+      "x": 210,
+      "y": 9985.5,
+      "width": 340,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-data-modification.yaml::ApiGwLambdaFunction",
+      "x": 710,
+      "y": 11676,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-data-modification.yaml::SSMLambdaFunctionName",
+      "x": 210,
+      "y": 11125,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-data-modification.yaml::SSMLambdaFunctionArn",
+      "x": 210,
+      "y": 11416,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml::ApiGwLambdaFunction",
+      "x": 710,
+      "y": 11904,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml::SSMLambdaFunctionName",
+      "x": 210,
+      "y": 11259,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml::SSMLambdaFunctionArn",
+      "x": 210,
+      "y": 12334,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-login-data.yaml::ApiGwLambdaFunction",
+      "x": 710,
+      "y": 12556,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-login-data.yaml::SSMLambdaFunctionName",
+      "x": 210,
+      "y": 11872,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan2/aws/plan2-lambda-login-data.yaml::SSMLambdaFunctionArn",
+      "x": 210,
+      "y": 13159.5,
+      "width": 415,
+      "height": 74
+    },
+    {
+      "id": "res:Plan3/plan3-lambda.yaml::ErrorLambdaFunction",
+      "x": 710,
+      "y": 11541.5,
+      "width": 345,
+      "height": 74
+    },
+    {
+      "id": "res:Plan3/plan3-lambda.yaml::ErrorLambdaFunctionTrigger",
+      "x": 210,
+      "y": 10368.5,
+      "width": 390,
+      "height": 74
+    },
+    {
+      "id": "res:Plan3/plan3-lambda.yaml::SSMLambdaFunctionArn",
+      "x": 210,
+      "y": 11986,
+      "width": 340,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-dynamodb-table.yaml::Plan4DynamoDBTable",
+      "x": 210,
+      "y": 11530,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-private-ec2-instance.yaml::PrivateInstance",
+      "x": 710,
+      "y": 2602,
+      "width": 380,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-private-ec2-instance.yaml::SSMPrivateEC2Instance",
+      "x": 210,
+      "y": 3638,
+      "width": 415,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-public-ec2-instance.yaml::PublicInstance",
+      "x": 710,
+      "y": 2736,
+      "width": 370,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-public-ec2-instance.yaml::PublicEBSVolume",
+      "x": 210,
+      "y": 11758,
+      "width": 365,
+      "height": 74
+    },
+    {
+      "id": "res:Plan4/plan4-public-ec2-instance.yaml::SSMPublicEC2Instance",
+      "x": 210,
+      "y": 3819,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:Plan5/plan5-evb.yaml::EC2CheckInstancesEventRule",
+      "x": 710,
+      "y": 10697,
+      "width": 345,
+      "height": 74
+    },
+    {
+      "id": "res:Plan5/plan5-evb.yaml::LambdaPermissionForEventBridge",
+      "x": 210,
+      "y": 11011,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:Plan5/plan5-lambda.yaml::EC2CheckInstancesLambdaFunction",
+      "x": 710,
+      "y": 13226.5,
+      "width": 405,
+      "height": 74
+    },
+    {
+      "id": "res:Plan5/plan5-lambda.yaml::SSMEC2CheckInstancesLambdaFunctionArn",
+      "x": 210,
+      "y": 13279.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/old/plan6-ec2-fleet-instances.yaml::MyEC2Fleet",
+      "x": 210,
+      "y": 1747,
+      "width": 370,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/old/plan6-ec2-fleet-instances.yaml::PublicLaunchTemplate",
+      "x": 710,
+      "y": 1747,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/plan6-ec2-templates.yaml::PublicEC2LaunchTemplate",
+      "x": 710,
+      "y": 9903,
+      "width": 415,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/plan6-ec2-templates.yaml::PublicEC2AutoScalingGroup",
+      "x": 210,
+      "y": 9643.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/plan6-eventbridge.yaml::DLMEventRule",
+      "x": 210,
+      "y": 12817.5,
+      "width": 315,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/plan6-lifecycle-manager.yaml::PublicEC2AMILifecyclePolicy",
+      "x": 210,
+      "y": 12931.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan6/plan6-lifecycle-manager.yaml::PublicEBSVolumeLifecyclePolicy",
+      "x": 210,
+      "y": 13045.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-ecr-lambda.yaml::ECRLambdaFunction",
+      "x": 710,
+      "y": 13928.5,
+      "width": 355,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-ecr-lambda.yaml::SSMECRLambdaFunctionArn",
+      "x": 210,
+      "y": 13981.5,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-ecr.yaml::ECRRegistry",
+      "x": 710,
+      "y": 11790,
+      "width": 285,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-ecr.yaml::ECRRepositorySSM",
+      "x": 210,
+      "y": 11644,
+      "width": 305,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-evb.yaml::EcrEc2CheckInstancesEventRule",
+      "x": 710,
+      "y": 12442,
+      "width": 360,
+      "height": 74
+    },
+    {
+      "id": "res:Plan7/plan7-evb.yaml::LambdaPermissionForEventBridge",
+      "x": 210,
+      "y": 12149.5,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALB",
+      "x": 1210,
+      "y": 12240,
+      "width": 375,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALBTargetGroup",
+      "x": 1210,
+      "y": 12650.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALBTargetGroupAttachment",
+      "x": 710,
+      "y": 12018,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALBListener",
+      "x": 710,
+      "y": 12670,
+      "width": 395,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALBListenerRule",
+      "x": 210,
+      "y": 12703.5,
+      "width": 420,
+      "height": 74
+    },
+    {
+      "id": "res:Plan8/plan8-alb.yaml::Plan8ALBSSMParameter",
+      "x": 710,
+      "y": 12230,
+      "width": 325,
+      "height": 74
+    },
+    {
+      "id": "res:test.yaml::TestWebS3BucketName",
+      "x": 210,
+      "y": 14095.5,
+      "width": 265,
+      "height": 74
+    },
+    {
+      "id": "res:test.yaml::TestErrorSNSTopic",
+      "x": 210,
+      "y": 14209.5,
+      "width": 255,
+      "height": 74
+    },
+    {
+      "id": "file:.github/workflows/main.yml",
+      "x": 210,
+      "y": 14315.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/CloudWatch/common-cw-metric-alarm.yaml",
+      "x": 710,
+      "y": 10591,
+      "width": 305,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/EC2/common-security-group.yml",
+      "x": 210,
+      "y": 14413.5,
+      "width": 260,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/EC2/ec2-keypair.yaml",
+      "x": 210,
+      "y": 14511.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/EC2/ec2-setting-ssm.yaml",
+      "x": 210,
+      "y": 14609.5,
+      "width": 235,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/EC2/instance-profile.yaml",
+      "x": 210,
+      "y": 14707.5,
+      "width": 240,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/destination-s3-role.yaml",
+      "x": 210,
+      "y": 14805.5,
+      "width": 255,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/lambda-iam-policy.yaml",
+      "x": 710,
+      "y": 6484.5,
+      "width": 245,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/lambda-iam-role.yaml",
+      "x": 210,
+      "y": 14903.5,
+      "width": 235,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/priv-ec2-iam-role.yaml",
+      "x": 210,
+      "y": 15001.5,
+      "width": 245,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/public-ec2-iam-role.yaml",
+      "x": 210,
+      "y": 15099.5,
+      "width": 255,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/s3-iam-role.yaml",
+      "x": 210,
+      "y": 15197.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/IAM/source-s3-role.yaml",
+      "x": 210,
+      "y": 15295.5,
+      "width": 230,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/RouteTable/priv-route.yml",
+      "x": 210,
+      "y": 15393.5,
+      "width": 240,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/RouteTable/public-route.yaml",
+      "x": 210,
+      "y": 15491.5,
+      "width": 255,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/RouteTable/vpc-endpoint.yaml",
+      "x": 210,
+      "y": 15589.5,
+      "width": 255,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/S3/common-s3-bucket.yaml",
+      "x": 210,
+      "y": 15687.5,
+      "width": 235,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/S3/common-s3-code-bucket.yaml",
+      "x": 210,
+      "y": 15785.5,
+      "width": 260,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/S3/common-s3-websites-bucket.yaml",
+      "x": 210,
+      "y": 15883.5,
+      "width": 280,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/SNS/common-sns.yaml",
+      "x": 710,
+      "y": 12336,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/Subnet/common-subnet.yml",
+      "x": 210,
+      "y": 15981.5,
+      "width": 235,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/Subnet/subnet.yml",
+      "x": 210,
+      "y": 16079.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/VPC/common-vpc.yml",
+      "x": 210,
+      "y": 16177.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:common/apse2/VPC/vpc.yml",
+      "x": 210,
+      "y": 16275.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan1/apne1/plan1-apne1-s3.yml",
+      "x": 210,
+      "y": 16373.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan1/apse2/plan1-apse2-s3.yaml",
+      "x": 210,
+      "y": 16471.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan1/apse2/plan1-lambda.yaml",
+      "x": 210,
+      "y": 16569.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/aws/plan2-apigw.yaml",
+      "x": 710,
+      "y": 12124,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/aws/plan2-apse2-s3.yaml",
+      "x": 210,
+      "y": 16667.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/aws/plan2-lambda-data-modification.yaml",
+      "x": 710,
+      "y": 13430.5,
+      "width": 275,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml",
+      "x": 710,
+      "y": 13528.5,
+      "width": 285,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/aws/plan2-lambda-login-data.yaml",
+      "x": 710,
+      "y": 13626.5,
+      "width": 240,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/create-html/vendor/bref/bref/serverless.yml",
+      "x": 210,
+      "y": 16765.5,
+      "width": 375,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/function/serverless.yml",
+      "x": 210,
+      "y": 16863.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/http/serverless.yml",
+      "x": 210,
+      "y": 16961.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/symfony/serverless.yml",
+      "x": 210,
+      "y": 17059.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/create-html/vendor/riverline/multipart-parser/.github/workflows/php.yml",
+      "x": 210,
+      "y": 17157.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/login/vendor/bref/bref/serverless.yml",
+      "x": 210,
+      "y": 17255.5,
+      "width": 345,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/login/vendor/bref/bref/template/function/serverless.yml",
+      "x": 210,
+      "y": 17353.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/login/vendor/bref/bref/template/http/serverless.yml",
+      "x": 210,
+      "y": 17451.5,
+      "width": 415,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/login/vendor/bref/bref/template/symfony/serverless.yml",
+      "x": 210,
+      "y": 17549.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/old/zip_package/login/vendor/riverline/multipart-parser/.github/workflows/php.yml",
+      "x": 210,
+      "y": 17647.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/zip_package/login/vendor/bref/bref/serverless.yml",
+      "x": 210,
+      "y": 17745.5,
+      "width": 325,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/zip_package/login/vendor/bref/bref/template/function/serverless.yml",
+      "x": 210,
+      "y": 17843.5,
+      "width": 415,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/zip_package/login/vendor/bref/bref/template/http/serverless.yml",
+      "x": 210,
+      "y": 17941.5,
+      "width": 395,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/zip_package/login/vendor/bref/bref/template/symfony/serverless.yml",
+      "x": 210,
+      "y": 18039.5,
+      "width": 410,
+      "height": 58
+    },
+    {
+      "id": "file:Plan2/zip_package/login/vendor/riverline/multipart-parser/.github/workflows/php.yml",
+      "x": 210,
+      "y": 18137.5,
+      "width": 420,
+      "height": 58
+    },
+    {
+      "id": "file:Plan3/plan3-lambda.yaml",
+      "x": 710,
+      "y": 10493,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan4/plan4-dynamodb-table.yaml",
+      "x": 210,
+      "y": 18235.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan4/plan4-private-ec2-instance.yaml",
+      "x": 210,
+      "y": 18333.5,
+      "width": 235,
+      "height": 58
+    },
+    {
+      "id": "file:Plan4/plan4-public-ec2-instance.yaml",
+      "x": 210,
+      "y": 18431.5,
+      "width": 230,
+      "height": 58
+    },
+    {
+      "id": "file:Plan5/plan5-evb.yaml",
+      "x": 710,
+      "y": 13332.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan5/plan5-lambda.yaml",
+      "x": 710,
+      "y": 13724.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan6/old/plan6-ec2-fleet-instances.yaml",
+      "x": 210,
+      "y": 18529.5,
+      "width": 250,
+      "height": 58
+    },
+    {
+      "id": "file:Plan6/plan6-ec2-templates.yaml",
+      "x": 210,
+      "y": 18627.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan6/plan6-eventbridge.yaml",
+      "x": 210,
+      "y": 18725.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan6/plan6-lifecycle-manager.yaml",
+      "x": 210,
+      "y": 18823.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan7/plan7-ecr-lambda.yaml",
+      "x": 710,
+      "y": 13822.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan7/plan7-ecr.yaml",
+      "x": 210,
+      "y": 18921.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan7/plan7-evb.yaml",
+      "x": 710,
+      "y": 14034.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:Plan8/plan8-alb.yaml",
+      "x": 210,
+      "y": 19019.5,
+      "width": 220,
+      "height": 58
+    },
+    {
+      "id": "file:test.yaml",
+      "x": 210,
+      "y": 19117.5,
+      "width": 220,
+      "height": 58
+    }
+  ]
+}
