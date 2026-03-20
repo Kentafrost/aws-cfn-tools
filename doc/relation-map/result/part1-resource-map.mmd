@@ -1,0 +1,22 @@
+flowchart LR
+  subgraph Main[Part1 Main Resources]
+    Lambda[Lambda MyS3AccessLambda]
+    SrcS3[Source S3 Bucket apse2]
+    DstS3[Destination S3 Bucket apne1]
+    ReplRole[S3 Replication Role]
+    VPCE[S3 VPC Endpoint]
+
+    ReplRole --> SrcS3
+    SrcS3 -->|replication| DstS3
+    VPCE --> SrcS3
+    Lambda --> SrcS3
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: Subnet SG Role BucketName]
+    Out[Output: LambdaS3BucketName]
+  end
+
+  In -. inject .-> Lambda
+  In -. inject .-> SrcS3
+  SrcS3 -. write .-> Out

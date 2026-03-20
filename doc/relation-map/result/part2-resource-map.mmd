@@ -1,0 +1,25 @@
+flowchart LR
+  subgraph Main[Part2 Main Resources]
+    Browser[Browser Client]
+    ApiGW[API Gateway]
+    Lambda[Lambda API handlers]
+    WebS3[Web S3 Bucket]
+    SNS[SNS Topic lambda-send-sns-topic]
+
+    Browser --> ApiGW
+    ApiGW --> Lambda
+    Lambda --> WebS3
+    WebS3 -->|ObjectCreated Put| Lambda
+    WebS3 -->|ObjectCreated Put| SNS
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: LambdaArn LambdaName BucketName Role]
+    Out[Output: ApiGWLambdaFunctionName ApiGWLambdaFunctionArn WebS3BucketName]
+  end
+
+  In -. inject .-> ApiGW
+  In -. inject .-> Lambda
+  In -. inject .-> WebS3
+  Lambda -. write .-> Out
+  WebS3 -. write .-> Out

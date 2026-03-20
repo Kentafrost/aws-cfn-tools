@@ -7,6 +7,7 @@
 - [フォルダ構造](#フォルダ構造)
 - [各プランの詳細](#各プランの詳細)
 - [共通リソース](#共通リソース)
+- [Part別リソース相関図（PNG）](#part別リソース相関図png)
 - [使用方法](#使用方法)
 - [前提条件](#前提条件)
 
@@ -111,6 +112,35 @@ aws-cfn-tools/
 - **SNS/** - 通知サービス設定
 - **CloudWatch/** - モニタリング設定
 
+## 🗺️ Part別リソース相関図（PNG）
+
+リソース同士の関係をPartごとに分割した図です。
+SSMは各図で「Separate Frame」として別枠表示にしています。
+
+### Part1
+![Part1 Resource Map](doc/result/relation-map/part1-resource-map.png)
+
+### Part2
+![Part2 Resource Map](doc/result/relation-map/part2-resource-map.png)
+
+### Part3
+![Part3 Resource Map](doc/result/relation-map/part3-resource-map.png)
+
+### Part4
+![Part4 Resource Map](doc/result/relation-map/part4-resource-map.png)
+
+### Part5
+![Part5 Resource Map](doc/result/relation-map/part5-resource-map.png)
+
+### Part6
+![Part6 Resource Map](doc/result/relation-map/part6-resource-map.png)
+
+### Part7
+![Part7 Resource Map](doc/result/relation-map/part7-resource-map.png)
+
+### Part8
+![Part8 Resource Map](doc/result/relation-map/part8-resource-map.png)
+
 ## 🚀 使用方法
 
 ### YAML相関マッピングの生成（TypeScript）
@@ -132,7 +162,7 @@ npm run cfn:map
 - `cfn-resource-graph.html`: part別フィルタ付きの相関ビュー
 
 各partのYAMLファイルの相関は以下のファイルを参照ください。
-[display-yaml.html](https://kentafrost.github.io/aws-cfn-tools/display-yaml.html)
+[display-yaml.html](https://kentafrost.github.io/aws-cfn-tools/doc/display-yaml.html)
 
 ### 基本デプロイメント
 ```bash

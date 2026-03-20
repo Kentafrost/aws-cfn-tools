@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Main[Part4 Main Resources]
+    PubSubnet[Public Subnet]
+    PrivSubnet[Private Subnet]
+    PubEC2[Public EC2]
+    PrivEC2[Private EC2]
+    EBS[Public EBS Volume]
+    DDB[DynamoDB Table]
+
+    PubSubnet --> PubEC2
+    PrivSubnet --> PrivEC2
+    EBS --> PubEC2
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: Subnet SG KeyPair InstanceProfile CWAgentConfig]
+    Out[Output: PublicEC2Instance PrivateEC2Instance]
+  end
+
+  In -. inject .-> PubEC2
+  In -. inject .-> PrivEC2
+  PubEC2 -. write .-> Out
+  PrivEC2 -. write .-> Out

@@ -5,111 +5,42 @@ This repository is a project aimed at learning and implementing infrastructure a
 ## 📋 Table of Contents
 - [Project Overview](#project-overview)
 - [Folder Structure](#folder-structure)
-- [Plan Details](#plan-details)
-- [Common Resources](#common-resources)
+- [YAML Quick Matrix (All Checked)](#yaml-quick-matrix-all-checked)
 - [Usage](#usage)
 - [Prerequisites](#prerequisites)
 
 ## 🎯 Project Overview
 
-### **Technologies Being Learned**
-- **AWS CloudFormation:** Automation of resource provisioning and infrastructure setup using YAML templates
-- **Infrastructure as Code (IaC):** Implementation of best practices for reliable and repeatable cloud deployments
-- **AWS Services:** Effective application building and management using EC2, S3, Lambda, and other foundational services
+This section is intentionally kept at summary level because project priorities can change over time.
 
-### **Current Development Goals**
-- Implementation of application installation on EC2 instances and automatic updates using SSM Managers
-- RUN command execution functionality for all EC2 instances
-- Login system using HTML in S3 buckets (integrated with Lambda, PHP, API Gateway, DynamoDB)
+### **Core Direction (Living Scope)**
+- **CloudFormation-first workflow:** Build and evolve AWS infrastructure through reusable YAML templates
+- **IaC operations:** Keep deployments repeatable, reviewable, and easier to maintain
+- **Service integration practice:** Combine core AWS services (for example EC2, S3, Lambda, API Gateway, CloudWatch, DynamoDB, ECR) across plan-based scenarios
+
+### **How to Track Latest Focus**
+- Plan-specific goals and implementation details: each plan folder's `README.md`
+- Ongoing ideas and future changes: `memo_to_add.md`
+- Template-level implementation state: [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) and [doc/display-yaml.html](doc/display-yaml.html)
 
 ## 📁 Folder Structure
 
-```
-aws-cfn-tools/
-├── Plan1/          # VPC, S3 Endpoints, Lambda, S3 Replication
-├── Plan2/          # HTML Data Processing and AWS Integration
-├── Plan3/          # CloudWatch Logs-based Alert Workflow
-├── Plan4/          # EC2 Instance Deployment (Windows Server + IIS)
-├── Plan5/          # EC2 Instance Automated Management and EventBridge Integration
-├── Plan6/          # AMI Lifecycle Automation and DLM
-├── Plan7/          # ECR + Lambda Container Integration
-├── Plan8/          # Additional Projects
-├── common/         # Common Resource Templates
-│   └── apse2/      # Templates for ap-southeast-2 Region
-├── memo_to_add.md  # Project Memos and Future Features
-├── test.yaml       # SSM Parameter Test Template
-└── yaml_files_list.csv  # Catalog of All YAML Files
-```
+This repository structure can evolve as plans and experiments change.
 
-## 🔧 Plan Details
+Current entry points (stable references):
+- `common/`: shared templates (for example regional baseline resources)
+- `PlanX/`: scenario-based templates and plan-specific docs
+- `doc/`: visualization and analysis tools/pages
+- `doc/scripts/`: generators for matrix and relation outputs
+- `memo_to_add.md`: notes and future ideas
 
-### Plan1: VPC Endpoints and S3 Integration
-- **Purpose:** VPC endpoint-based access from Lambda functions to S3 buckets
-- **Features:** Cross-region S3 bucket replication (Tokyo ⇔ Sydney)
-- **Resources:** VPC, Route Tables, VPC Endpoints, Subnets, Security Groups, Lambda, S3
+For up-to-date template inventory and relationships, use:
+- [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html)
+- [doc/display-yaml.html](doc/display-yaml.html)
 
-### Plan2: HTML Data Processing
-- **Purpose:** HTML data management and AWS service integration
-- **Files:** html_input_data.csv, configuration files
 
-### Plan3: CloudWatch Logs Alert System
-- **Workflow:** 
-  ```
-  Lambda → CloudWatch Logs → Metric Filter → CloudWatch Alarm → SNS → Lambda for Alarm → Email Notifications
-  ```
-- **Features:** Log pattern monitoring, metrics extraction, automatic alerts, email notifications
+This README keeps summary-level information only, while detailed template-level tables are handled in the separate HTML page.
 
-### Plan4: EC2 Instance Management
-- **Platform:** Windows Server + IIS
-- **Features:** CloudWatch Agent, SSM integration, website accessibility
-- **Templates:**
-  - `plan4-public-ec2-instance.yaml` - Public instance
-  - `plan4-private-ec2-instance.yaml` - Private instance
-  - `plan4-dynamodb-table.yaml` - DynamoDB table
-
-### Plan5: EC2 Automated Management System
-- **Features:** EC2 instance status checks and automatic shutdown
-- **Workflow:** Lambda execution → Instance shutdown → SNS notification → Error handling
-- **Monitoring:** CloudWatch Logs, metrics, alarms
-
-### Plan6: AMI Lifecycle Management
-- **Features:** Automation of AMI creation and EBS snapshots
-- **Scheduling:** Regular backup creation
-- **Notifications:** EventBridge rules and SNS integration
-- **Scripts:** `create_ami.py` - AMI creation automation
-
-### Plan7: ECR and Lambda Containers
-- **Features:** ECR repository and Lambda container integration
-- **Files:**
-  - `plan7-ecr.yaml` - ECR repository
-  - `plan7-ecr-lambda.yaml` - Lambda integration
-  - `Dockerfile/` - Container definitions
-
-## 🔄 Common Resources (common/apse2/)
-
-### EC2 Related
-- **ec2-keypair.yaml** - EC2 keypair configuration
-- **ec2-setting-ssm.yaml** - SSM configuration
-- **instance-profile.yaml** - Instance profile
-- **common-security-group.yml** - Common security group
-
-### IAM Related
-- **lambda-iam-role.yaml** - Lambda execution role
-- **public-ec2-iam-role.yaml** - Public EC2 role
-- **priv-ec2-iam-role.yaml** - Private EC2 role
-- **destination-s3-role.yaml** - S3 destination role
-
-### S3 Related
-- **common-s3-bucket.yaml** - Basic S3 bucket
-- **common-s3-websites-bucket.yaml** - Website S3 bucket
-- **common-s3-code-bucket.yaml** - Code storage S3 bucket
-
-### Other Services
-- **VPC/** - VPC configuration templates
-- **Subnet/** - Subnet configuration
-- **RouteTable/** - Route table configuration
-- **SNS/** - Notification service configuration
-- **CloudWatch/** - Monitoring configuration
 
 ## 🚀 Usage
 
@@ -129,9 +60,9 @@ aws cloudformation create-stack --stack-name plan1-resources --template-body fil
 - Appropriate IAM permissions - Create and manage EC2, S3, IAM, CloudWatch resources
 
 ## 📊 Project Statistics
-- **YAML Templates:** 30+ files
-- **Target AWS Services:** EC2, S3, Lambda, CloudWatch, SNS, IAM, DynamoDB, ECR
-- **Regions:** ap-southeast-2 (main), ap-northeast-1 (replication)
+- **YAML and resource counts:** generated dynamically in [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html)
+- **Service distribution:** generated dynamically in [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html)
+- **Regions:** ap-southeast-2 (main, Sydney Region), ap-northeast-1 (replication, Tokyo Region)
 - **Automation Scripts:** Python (boto3), PowerShell
 
 ---

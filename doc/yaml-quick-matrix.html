@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YAML Quick Matrix by Part</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #cbd5e1;
+      --link: #7dd3fc;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 26px;
+    }
+
+    h2 {
+      margin: 28px 0 8px;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      color: var(--muted);
+    }
+
+    a { color: var(--link); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .status { color: #fda4af; }
+
+    .chart-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .chart-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chart-controls select {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 44px;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      height: 22px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #22d3ee);
+      color: #0b1220;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+      box-sizing: border-box;
+      min-width: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    th { background: #1e293b; }
+
+    code {
+      background: #1e293b;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>CloudFormation YAML Quick Matrix (by Part)</h1>
+  <p>Focused view of each template: YAML file, service kinds, and logical resource names.</p>
+  <p><a href="../README_en.md">Back to README_en.md</a> | <a href="display-yaml.html">Open dependency viewer (display-yaml.html)</a></p>
+
+  <div class="panel" id="summary">
+    <p>Loading matrix JSON...</p>
+  </div>
+
+  <div class="panel chart-wrap">
+    <h2>Resource Distribution by AWS Service</h2>
+    <div class="chart-controls">
+      <label for="partFilter">Scope:</label>
+      <select id="partFilter"></select>
+    </div>
+    <div id="serviceChart"></div>
+  </div>
+
+  <div id="matrixContainer"></div>
+
+  <script>
+    const DATA_FILE = "yaml-quick-matrix.json";
+    const summaryEl = document.getElementById("summary");
+    const matrixContainerEl = document.getElementById("matrixContainer");
+    const partFilterEl = document.getElementById("partFilter");
+    const serviceChartEl = document.getElementById("serviceChart");
+    let matrixData = null;
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function partOrder(part) {
+      if (part === "Common") return 0;
+      const m = part.match(/^Part(\d+)$/);
+      if (m) return Number(m[1]);
+      if (part === "Test") return 9998;
+      return 9999;
+    }
+
+    function formatListAsCode(values) {
+      if (!Array.isArray(values) || values.length === 0) {
+        return "-";
+      }
+      return values.map((item) => `<code>${escapeHtml(item)}</code>`).join(", ");
+    }
+
+    function toTotalResources(serviceCounts) {
+      return (serviceCounts || []).reduce((sum, item) => sum + (item.count || 0), 0);
+    }
+
+    function getSortedPartsFromData(data) {
+      const byPart = data.serviceResourceCountsByPart || {};
+      return Object.keys(byPart).sort((a, b) => {
+        const diff = partOrder(a) - partOrder(b);
+        return diff !== 0 ? diff : String(a).localeCompare(String(b));
+      });
+    }
+
+    function getCountsByScope(data, scope) {
+      if (scope === "All") {
+        return Array.isArray(data.serviceResourceCounts) ? data.serviceResourceCounts : [];
+      }
+      const byPart = data.serviceResourceCountsByPart || {};
+      return Array.isArray(byPart[scope]) ? byPart[scope] : [];
+    }
+
+    function renderServiceChart() {
+      if (!matrixData) {
+        serviceChartEl.innerHTML = "<p class=\"status\">No data loaded.</p>";
+        return;
+      }
+
+      const scope = partFilterEl.value || "All";
+      const counts = getCountsByScope(matrixData, scope);
+      if (!counts.length) {
+        serviceChartEl.innerHTML = "<p class=\"status\">No service resource data for selected scope.</p>";
+        return;
+      }
+
+      const top = counts.slice(0, 20);
+      const max = Math.max(...top.map((item) => item.count || 0), 1);
+      const total = toTotalResources(counts);
+
+      const rows = top.map((item) => {
+        const width = Math.max(4, Math.round(((item.count || 0) / max) * 100));
+        return `
+          <div class="bar-row">
+            <div>${escapeHtml(item.service)}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${width}%">${escapeHtml(item.count)}</div>
+            </div>
+            <div>${escapeHtml(item.count)}</div>
+          </div>
+        `;
+      }).join("\n");
+
+      serviceChartEl.innerHTML = `
+        <p><strong>Scope:</strong> ${escapeHtml(scope)} | <strong>Total resources:</strong> ${escapeHtml(total)}</p>
+        <div class="bar-list">${rows}</div>
+      `;
+    }
+
+    function initPartFilter(data) {
+      const parts = getSortedPartsFromData(data);
+      partFilterEl.innerHTML = ["All", ...parts]
+        .map((part) => `<option value="${escapeHtml(part)}">${escapeHtml(part)}</option>`)
+        .join("");
+      partFilterEl.value = "All";
+      partFilterEl.addEventListener("change", renderServiceChart);
+    }
+
+    function buildPartTable(part, rows) {
+      const tableRows = rows.map((row) => {
+        return `
+          <tr>
+            <td><code>${escapeHtml(row.file)}</code></td>
+            <td>${escapeHtml((row.services || []).join(", ")) || "-"}</td>
+            <td>${formatListAsCode(row.resourceNames || [])}</td>
+          </tr>
+        `;
+      }).join("");
+
+      return `
+        <h2>${escapeHtml(part)}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>YAML File</th>
+              <th>Service Kinds</th>
+              <th>Resource Names (Logical IDs)</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      `;
+    }
+
+    async function render() {
+      try {
+        const response = await fetch(DATA_FILE, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Failed to load ${DATA_FILE}: HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rows = Array.isArray(data.rows) ? data.rows : [];
+        matrixData = data;
+        const grouped = new Map();
+
+        for (const row of rows) {
+          const part = row.part || "Other";
+          const list = grouped.get(part) || [];
+          list.push(row);
+          grouped.set(part, list);
+        }
+
+        const parts = Array.from(grouped.keys()).sort((a, b) => {
+          const diff = partOrder(a) - partOrder(b);
+          return diff !== 0 ? diff : String(a).localeCompare(String(b));
+        });
+
+        const totalResources = data.totalResources || toTotalResources(data.serviceResourceCounts || []);
+
+        summaryEl.innerHTML = `
+          <p><strong>Data file:</strong> <a href="${DATA_FILE}">${DATA_FILE}</a></p>
+          <p><strong>Generated at:</strong> ${escapeHtml(data.generatedAt || "-")}</p>
+          <p><strong>Total YAML files:</strong> ${escapeHtml(data.totalFiles || rows.length)}</p>
+          <p><strong>Total resources:</strong> ${escapeHtml(totalResources)}</p>
+          <p><strong>Parts:</strong> ${escapeHtml(parts.join(", "))}</p>
+        `;
+
+        initPartFilter(data);
+        renderServiceChart();
+
+        matrixContainerEl.innerHTML = parts.map((part) => buildPartTable(part, grouped.get(part) || [])).join("\n");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        summaryEl.innerHTML = `<p class="status">${escapeHtml(message)}</p>`;
+        matrixContainerEl.innerHTML = "";
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>

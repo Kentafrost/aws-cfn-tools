@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph Main[Part6 Main Resources]
+    LT[EC2 LaunchTemplate]
+    ASG[AutoScalingGroup]
+    DLM1[DLM Policy AMI]
+    DLM2[DLM Policy EBS]
+    Rule[EventBridge DLM Event Rule]
+    SNS[SNS Topic dlm-notifications-sns-topic]
+
+    LT --> ASG
+    ASG --> DLM1
+    ASG --> DLM2
+    DLM1 --> Rule
+    DLM2 --> Rule
+    Rule --> SNS
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: Subnet SG KeyPair InstanceProfile]
+    Out[Output: none in current Part6 templates]
+  end
+
+  In -. inject .-> LT
+  In -. inject .-> ASG

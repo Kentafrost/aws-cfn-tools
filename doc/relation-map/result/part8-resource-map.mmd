@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph Main[Part8 Main Resources]
+    Internet[Internet Users]
+    ALB[Application Load Balancer]
+    Listener[HTTP Listener 80]
+    Rule[Listener Rule path star]
+    TG[Target Group]
+    Targets[EC2 Targets]
+
+    Internet --> ALB
+    ALB --> Listener
+    Listener --> Rule
+    Rule --> TG
+    TG --> Targets
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: VPC PublicSubnet1 PublicSubnet2 ALBSecurityGroup]
+    Out[Output: Plan8ALB]
+  end
+
+  In -. inject .-> ALB
+  In -. inject .-> TG
+  ALB -. write .-> Out

@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Main[Part7 Main Resources]
+    ECR[ECR Repository]
+    Rule[EventBridge Schedule Rule]
+    Lambda[Lambda PackageType Image]
+    SNS[SNS Topic basicSNSTopic]
+    WebS3[Web S3 Bucket]
+
+    ECR -->|container image| Lambda
+    Rule --> Lambda
+    Lambda --> SNS
+    Lambda --> WebS3
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: EcrRepository LambdaRole basicSNSTopic WebS3Bucket]
+    Out[Output: Plan7EcrRepository ECRLambdaFunctionName]
+  end
+
+  In -. inject .-> ECR
+  In -. inject .-> Lambda
+  ECR -. write .-> Out
+  Lambda -. write .-> Out

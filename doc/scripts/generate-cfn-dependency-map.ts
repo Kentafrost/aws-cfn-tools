@@ -25,6 +25,13 @@ type EdgeRecord = {
   detail?: string;
 };
 
+type FileEdgeRecord = {
+  fromFile: string;
+  toFile: string;
+  kinds: string[];
+  details: string[];
+};
+
 type ExternalRef = {
   file: string;
   resource: string;
@@ -102,6 +109,66 @@ function buildTemplateLabel(filePath: string, resources: Array<{ logicalId: stri
 
 function getFileSummaryByPath(mapJson: { files: FileSummary[] }, filePath: string): FileSummary | undefined {
   return mapJson.files.find((file) => file.path === filePath);
+}
+
+function resolveFileFromNodeId(nodeId: string): string | null {
+  if (nodeId.startsWith('file:')) {
+    return nodeId.slice('file:'.length);
+  }
+
+  if (nodeId.startsWith('res:')) {
+    const rest = nodeId.slice('res:'.length);
+    const separatorIndex = rest.indexOf('::');
+    return separatorIndex >= 0 ? rest.slice(0, separatorIndex) : rest;
+  }
+
+  return null;
+}
+
+function aggregateFileEdges(edges: EdgeRecord[]): FileEdgeRecord[] {
+  const edgeMap = new Map<string, { fromFile: string; toFile: string; kinds: Set<string>; details: Set<string> }>();
+
+  for (const edge of edges) {
+    const fromFile = resolveFileFromNodeId(edge.from);
+    const toFile = resolveFileFromNodeId(edge.to);
+
+    if (!fromFile || !toFile || fromFile === toFile) {
+      continue;
+    }
+
+    const key = `${fromFile}|${toFile}`;
+    const current = edgeMap.get(key) ?? {
+      fromFile,
+      toFile,
+      kinds: new Set<string>(),
+      details: new Set<string>(),
+    };
+
+    current.kinds.add(edge.kind);
+    if (edge.detail) {
+      current.details.add(edge.detail);
+    }
+    edgeMap.set(key, current);
+  }
+
+  return [...edgeMap.values()]
+    .map((entry) => ({
+      fromFile: entry.fromFile,
+      toFile: entry.toFile,
+      kinds: [...entry.kinds].sort((left, right) => left.localeCompare(right)),
+      details: [...entry.details].sort((left, right) => left.localeCompare(right)),
+    }))
+    .sort((left, right) => {
+      const byFrom = left.fromFile.localeCompare(right.fromFile);
+      return byFrom !== 0 ? byFrom : left.toFile.localeCompare(right.toFile);
+    });
+}
+
+function buildFileEdgeLabel(edge: FileEdgeRecord): string {
+  const detailLines = edge.details.length > 3
+    ? [...edge.details.slice(0, 3), `+${edge.details.length - 3} more`]
+    : edge.details;
+  return [...edge.kinds, ...detailLines].join('\n');
 }
 
 function resolvePartFromFile(filePath: string): string {
@@ -249,6 +316,48 @@ function renderVisualizationHtml(
     '      return lines.join("\\n");',
     '    }',
     '',
+    '    function resolveFileFromNodeId(nodeId) {',
+    '      if (nodeId.startsWith("file:")) return nodeId.slice(5);',
+    '      if (nodeId.startsWith("res:")) {',
+    '        const rest = nodeId.slice(4);',
+    '        const separatorIndex = rest.indexOf("::");',
+    '        return separatorIndex >= 0 ? rest.slice(0, separatorIndex) : rest;',
+    '      }',
+    '      return null;',
+    '    }',
+    '',
+    '    function aggregateFileEdges(edges) {',
+    '      const edgeMap = new Map();',
+    '      for (const edge of edges) {',
+    '        const fromFile = resolveFileFromNodeId(edge.from);',
+    '        const toFile = resolveFileFromNodeId(edge.to);',
+    '        if (!fromFile || !toFile || fromFile === toFile) continue;',
+    '        const key = `${fromFile}|${toFile}`;',
+    '        const current = edgeMap.get(key) || { fromFile, toFile, kinds: new Set(), details: new Set() };',
+    '        current.kinds.add(edge.kind);',
+    '        if (edge.detail) current.details.add(edge.detail);',
+    '        edgeMap.set(key, current);',
+    '      }',
+    '      return Array.from(edgeMap.values())',
+    '        .map((entry) => ({',
+    '          fromFile: entry.fromFile,',
+    '          toFile: entry.toFile,',
+    '          kinds: Array.from(entry.kinds).sort((left, right) => left.localeCompare(right)),',
+    '          details: Array.from(entry.details).sort((left, right) => left.localeCompare(right)),',
+    '        }))',
+    '        .sort((left, right) => {',
+    '          const byFrom = left.fromFile.localeCompare(right.fromFile);',
+    '          return byFrom !== 0 ? byFrom : left.toFile.localeCompare(right.toFile);',
+    '        });',
+    '    }',
+    '',
+    '    function buildFileEdgeLabel(edge) {',
+    '      const detailLines = edge.details.length > 3',
+    '        ? [...edge.details.slice(0, 3), `+${edge.details.length - 3} more`]',
+    '        : edge.details;',
+    '      return [...edge.kinds, ...detailLines].join("\\n");',
+    '    }',
+    '',
     '    function collectSelectedParts() {',
     '      return Array.from(document.querySelectorAll("input[name=partFilter]:checked")).map((input) => input.value);',
     '    }',
@@ -302,26 +411,16 @@ function renderVisualizationHtml(
     '',
     '    function buildFilteredGraph() {',
     '      const selectedParts = new Set(collectSelectedParts());',
-    '      const includedNodeIds = new Set();',
-    '      const resources = mapData.nodes.resources.filter((node) => selectedParts.has(resolvePart(node.file)));',
     '      const templates = mapData.nodes.templates.filter((node) => selectedParts.has(resolvePart(node.file)));',
-    '      for (const node of resources) includedNodeIds.add(node.id);',
-    '      for (const node of templates) includedNodeIds.add(node.id);',
-    '      const edges = mapData.edges.filter((edge) => includedNodeIds.has(edge.from) && includedNodeIds.has(edge.to));',
+    '      const selectedFiles = new Set(templates.map((node) => node.file));',
+    '      const resources = mapData.nodes.resources.filter((node) => selectedFiles.has(node.file));',
+    '      const edges = aggregateFileEdges(mapData.edges).filter((edge) => selectedFiles.has(edge.fromFile) && selectedFiles.has(edge.toFile));',
     '',
     '      const dotLines = [];',
     '      dotLines.push("digraph CloudFormationDependencies {");',
     '      dotLines.push("  rankdir=LR;");',
     '      dotLines.push("  overlap=false;");',
     '      dotLines.push("  splines=true;");',
-    '',
-    '      for (const node of resources) {',
-    '        const part = resolvePart(node.file);',
-    '        const fill = getPartColor(part);',
-    '        const border = part === "Other" ? "#64748b" : "#e2e8f0";',
-    '        const label = `${node.logicalId}\\n${node.type}\\n${getFileName(node.file)}`;',
-    '        dotLines.push(`  "${escapeDot(node.id)}" [shape=box, style="rounded,filled", fillcolor="${fill}", color="${border}", fontname="Helvetica", fontcolor="#0f172a", label="${escapeDot(label)}"];`);',
-    '      }',
     '',
     '      for (const node of templates) {',
     '        const part = resolvePart(node.file);',
@@ -331,9 +430,9 @@ function renderVisualizationHtml(
     '      }',
     '',
     '      for (const edge of edges) {',
-    '        const label = edge.detail ? `${edge.kind}: ${edge.detail}` : edge.kind;',
-    '        const color = edge.kind === "SSMParameterLink" ? "#f472b6" : edge.kind === "RefCrossFileUnique" ? "#fbbf24" : "#cbd5e1";',
-    '        dotLines.push(`  "${escapeDot(edge.from)}" -> "${escapeDot(edge.to)}" [label="${escapeDot(label)}", color="${color}", fontcolor="${color}"];`);',
+    '        const color = edge.kinds.includes("SSMParameterLink") ? "#f472b6" : edge.kinds.includes("RefCrossFileUnique") ? "#fbbf24" : "#cbd5e1";',
+    '        const label = buildFileEdgeLabel(edge);',
+    '        dotLines.push(`  "${escapeDot(`file:${edge.fromFile}`)}" -> "${escapeDot(`file:${edge.toFile}`)}" [label="${escapeDot(label)}", color="${color}", fontcolor="${color}"]`);',
     '      }',
     '',
     '      dotLines.push("}");',
@@ -342,7 +441,7 @@ function renderVisualizationHtml(
     '        `Selected parts: ${selectedParts.size ? Array.from(selectedParts).join(", ") : "none"}` ,',
     '        `Visible resources: ${resources.length}` ,',
     '        `Visible templates: ${templates.length}` ,',
-    '        `Visible edges: ${edges.length}`',
+    '        `Visible file relationships: ${edges.length}`',
     '      ].join("<br>");',
     '',
     '      return dotLines.join("\\n");',
@@ -806,15 +905,12 @@ async function main(): Promise<void> {
   }
   const cycles = alg.findCycles(cycleGraph);
 
+  const fileEdges = aggregateFileEdges(edges);
+
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setGraph({ rankdir: 'LR', ranksep: 80, nodesep: 40 });
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  for (const node of resourceNodes) {
-        const label = `${node.logicalId}\\n${node.type}\\n(${getFileName(node.file)})`;
-    const width = Math.max(220, Math.min(420, label.length * 5));
-    dagreGraph.setNode(node.id, { label, width, height: 74 });
-  }
   for (const fileNode of fileNodes.values()) {
     const summary = getFileSummaryByPath({ files: fileSummaries }, fileNode.file);
     const label = buildTemplateLabel(fileNode.file, summary?.resources ?? []);
@@ -822,8 +918,8 @@ async function main(): Promise<void> {
     const height = Math.max(58, 26 + label.split('\\n').length * 16);
     dagreGraph.setNode(fileNode.id, { label, width, height });
   }
-  for (const edge of edges) {
-    dagreGraph.setEdge(edge.from, edge.to);
+  for (const edge of fileEdges) {
+    dagreGraph.setEdge(`file:${edge.fromFile}`, `file:${edge.toFile}`);
   }
   dagre.layout(dagreGraph);
 
@@ -868,24 +964,18 @@ async function main(): Promise<void> {
   dotLines.push('  rankdir=LR;');
   dotLines.push('  overlap=false;');
   dotLines.push('  splines=true;');
-  dotLines.push('  node [shape=box, style="rounded,filled", fillcolor="#EAF2FF", color="#4A6FA5", fontname="Helvetica"];');
-
-  for (const node of resourceNodes) {
-    const id = escapeDot(node.id);
-    const label = escapeDot(`${node.logicalId}\\n${node.type}\\n${getFileName(node.file)}`);
-    dotLines.push(`  "${id}" [label="${label}"];`);
-  }
+  dotLines.push('  node [shape=folder, style="filled", fillcolor="#FFF4DE", color="#B28629", fontname="Helvetica"];');
   for (const fileNode of fileNodes.values()) {
     const id = escapeDot(fileNode.id);
     const summary = getFileSummaryByPath({ files: fileSummaries }, fileNode.file);
     const label = escapeDot(buildTemplateLabel(fileNode.file, summary?.resources ?? []));
-    dotLines.push(`  "${id}" [shape=folder, fillcolor="#FFF4DE", color="#B28629", label="${label}"];`);
+    dotLines.push(`  "${id}" [label="${label}"];`);
   }
 
-  for (const edge of edges) {
-    const from = escapeDot(edge.from);
-    const to = escapeDot(edge.to);
-    const label = escapeDot(edge.detail ? `${edge.kind}: ${edge.detail}` : edge.kind);
+  for (const edge of fileEdges) {
+    const from = escapeDot(`file:${edge.fromFile}`);
+    const to = escapeDot(`file:${edge.toFile}`);
+    const label = escapeDot(buildFileEdgeLabel(edge));
     dotLines.push(`  "${from}" -> "${to}" [label="${label}"];`);
   }
 

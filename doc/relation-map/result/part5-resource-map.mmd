@@ -1,0 +1,18 @@
+flowchart LR
+  subgraph Main[Part5 Main Resources]
+    Rule[EventBridge Schedule Rule]
+    Lambda[Lambda EC2CheckInstances]
+    SNS[SNS Topic basicSNSTopic]
+
+    Rule --> Lambda
+    Lambda --> SNS
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: EC2CheckInstancesLambdaFunctionName basicSNSTopic]
+    Out[Output: EC2CheckInstancesLambdaFunctionName]
+  end
+
+  In -. inject .-> Rule
+  In -. inject .-> Lambda
+  Lambda -. write .-> Out

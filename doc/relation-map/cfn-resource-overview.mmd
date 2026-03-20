@@ -1,0 +1,76 @@
+flowchart LR
+  subgraph Main[CloudFormation Resource Relationships - Main]
+
+    P1[Plan1: S3 Replication + Lambda]
+    P2[Plan2: Web S3 + API Gateway + Lambda]
+    P3[Plan3: Error Notify Lambda]
+    P4[Plan4: Public/Private EC2 + DynamoDB]
+    P5[Plan5: EventBridge Scheduled EC2 Check]
+    P6[Plan6: LaunchTemplate/ASG + DLM]
+    P7[Plan7: ECR Image Lambda + EventBridge]
+    P8[Plan8: ALB + Target Group]
+
+    API[API Gateway]
+    LAM[Lambda]
+    S3[S3 Buckets]
+    SNS[SNS Topics]
+    EVB[EventBridge Rules]
+    EC2[EC2 / ASG]
+    DLM[DLM Lifecycle Policies]
+    ECR[ECR Repository]
+    ALB[ALB/Listener/TargetGroup]
+    DDB[DynamoDB]
+
+    P1 --> S3
+    P1 --> LAM
+    P2 --> API
+    P2 --> LAM
+    P2 --> S3
+    P2 --> SNS
+    P3 --> LAM
+    P3 --> SNS
+    P4 --> EC2
+    P4 --> DDB
+    P5 --> EVB
+    P5 --> LAM
+    P5 --> SNS
+    P6 --> EC2
+    P6 --> DLM
+    P6 --> EVB
+    P6 --> SNS
+    P7 --> ECR
+    P7 --> LAM
+    P7 --> EVB
+    P7 --> SNS
+    P8 --> ALB
+
+    API --> LAM
+    LAM --> S3
+    LAM --> SNS
+    EVB --> LAM
+    EC2 --> DLM
+    DLM --> EVB
+    ALB --> EC2
+  end
+
+  subgraph SSMFrame[SSM Parameters - Separate Frame]
+    SSMV[SSM Parameter inputs\nVPC Subnet SG Role Name]
+    SSMW[SSM Parameter writes\nResource IDs ARNs Names]
+  end
+
+  SSMV -. inject .-> API
+  SSMV -. inject .-> LAM
+  SSMV -. inject .-> S3
+  SSMV -. inject .-> SNS
+  SSMV -. inject .-> EVB
+  SSMV -. inject .-> EC2
+  SSMV -. inject .-> ECR
+  SSMV -. inject .-> ALB
+
+  LAM -. output .-> SSMW
+  S3 -. output .-> SSMW
+  SNS -. output .-> SSMW
+  EVB -. output .-> SSMW
+  EC2 -. output .-> SSMW
+  ECR -. output .-> SSMW
+  ALB -. output .-> SSMW

@@ -50,41 +50,80 @@ function summarizeResourceNames(file, limit = 8) {
     return [...names.slice(0, limit), `... +${names.length - limit} more`];
 }
 
+function resolveFileFromNodeId(nodeId) {
+    if (nodeId.startsWith("file:")) {
+        return nodeId.slice(5);
+    }
+
+    if (nodeId.startsWith("res:")) {
+        const rest = nodeId.slice(4);
+        const separatorIndex = rest.indexOf("::");
+        return separatorIndex >= 0 ? rest.slice(0, separatorIndex) : rest;
+    }
+
+    return null;
+}
+
+function aggregateFileEdges(edges) {
+    const edgeMap = new Map();
+
+    for (const edge of edges) {
+        const fromFile = resolveFileFromNodeId(edge.from);
+        const toFile = resolveFileFromNodeId(edge.to);
+
+        if (!fromFile || !toFile || fromFile === toFile) {
+            continue;
+        }
+
+        const key = `${fromFile}|${toFile}`;
+        const current = edgeMap.get(key) || {
+            fromFile,
+            toFile,
+            kinds: new Set(),
+            details: new Set(),
+        };
+
+        current.kinds.add(edge.kind);
+        if (edge.detail) {
+            current.details.add(edge.detail);
+        }
+        edgeMap.set(key, current);
+    }
+
+    return Array.from(edgeMap.values())
+        .map((entry) => ({
+            fromFile: entry.fromFile,
+            toFile: entry.toFile,
+            kinds: Array.from(entry.kinds).sort((left, right) => left.localeCompare(right)),
+            details: Array.from(entry.details).sort((left, right) => left.localeCompare(right)),
+        }))
+        .sort((left, right) => {
+            const byFrom = left.fromFile.localeCompare(right.fromFile);
+            return byFrom !== 0 ? byFrom : left.toFile.localeCompare(right.toFile);
+        });
+}
+
+function buildFileEdgeLabel(edge) {
+    const detailLines = edge.details.length > 3
+        ? [...edge.details.slice(0, 3), `+${edge.details.length - 3} more`]
+        : edge.details;
+    return [...edge.kinds, ...detailLines].join("\\n");
+}
+
 function escapeDot(value) {
     return String(value).replace(/\\/g, "\\\\").replace(/\"/g, "\\\"");
-}
-
-function isYamlPath(filePath) {
     return /\.ya?ml$/i.test(filePath);
 }
-
-function getSortedYamlFiles(files) {
-    return [...files].sort((left, right) => left.path.localeCompare(right.path, "ja"));
-}
-
-function getVisibleYamlFiles() {
-    const query = fileSearchEl.value.trim().toLowerCase();
-    if (!query) {
-        return yamlFiles;
-    }
-    return yamlFiles.filter((file) => file.path.toLowerCase().includes(query));
-}
-
+    const edges = aggregateFileEdges(mapData.edges).filter((edge) => selectedFiles.has(edge.fromFile) && selectedFiles.has(edge.toFile));
 function updateSelectionSummary(extra = {}) {
     const visibleFiles = getVisibleYamlFiles();
     const selectedCount = selectedFilePaths.size;
     const searchQuery = fileSearchEl.value.trim();
     const lines = [
         `Total YAML files: ${yamlFiles.length}`,
-        `Search results: ${visibleFiles.length}`,
+    dotLines.push('  node [shape=folder, style="filled", fillcolor="#FFF4DE", color="#B28629", fontname="Helvetica"];');
         `Selected YAML files: ${selectedCount}`,
     ];
-
-    if (searchQuery) {
-        lines.push(`Search query: ${searchQuery}`);
-    }
-    if (typeof extra.templates === "number") {
-        lines.push(`Visible templates: ${extra.templates}`);
     }
     if (typeof extra.resources === "number") {
         lines.push(`Visible resources: ${extra.resources}`);
@@ -96,10 +135,10 @@ function updateSelectionSummary(extra = {}) {
     selectionSummaryEl.innerHTML = lines.join("<br>");
 }
 
-function collectSelectedFiles() {
-    return new Set(selectedFilePaths);
-}
-
+        const color = edge.kinds.includes("SSMParameterLink") ? "#f472b6" : edge.kinds.includes("RefCrossFileUnique") ? "#fbbf24" : "#cbd5e1";
+        const label = buildFileEdgeLabel(edge);
+        dotLines.push(`  "${escapeDot(`file:${edge.fromFile}`)}" -> "${escapeDot(`file:${edge.toFile}`)}" [label="${escapeDot(label)}", color="${color}", fontcolor="${color}"];
+`);
 function buildFilterOptions() {
     const visibleFiles = getVisibleYamlFiles();
     fileFiltersEl.innerHTML = visibleFiles.map((file) => {

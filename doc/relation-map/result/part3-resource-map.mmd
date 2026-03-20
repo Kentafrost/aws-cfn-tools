@@ -1,0 +1,17 @@
+flowchart LR
+  subgraph Main[Part3 Main Resources]
+    TriggerSNS[Trigger SNS Topic]
+    Lambda[Lambda error-sendmail]
+    MailSNS[Mail SNS Topic]
+
+    TriggerSNS -->|invoke permission| Lambda
+    Lambda --> MailSNS
+  end
+
+  subgraph SSM[SSM Parameters Separate Frame]
+    In[Input: Error Trigger Topic Arn Mail Topic Arn]
+    Out[Output: ErrorLambdaFunctionName]
+  end
+
+  In -. inject .-> Lambda
+  Lambda -. write .-> Out
