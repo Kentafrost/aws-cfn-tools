@@ -1,0 +1,135 @@
+digraph CloudFormationDependencies {
+  rankdir=LR;
+  overlap=false;
+  splines=true;
+  node [shape=folder, style="filled", fillcolor="#FFF4DE", color="#B28629", fontname="Helvetica"];
+  "file:.github/workflows/main.yml" [label="main.yml\\nResources\\nNo resources"];
+  "file:common/apse2/CloudWatch/common-cw-metric-alarm.yaml" [label="common-cw-metric-alarm.yaml\\nResources\\nApiGwLambdaMetricFilter\\nApiGwLambdaLogAlarm\\nEC2CheckInstancesLambdaMetricFilter\\nEC2CheckInstancesLambdaLogAlarm\\nPlan7EcrLambdaMetricFilter\\nPlan7EcrLambdaLogAlarm\\nS3PutObjectAlarm"];
+  "file:common/apse2/EC2/common-security-group.yml" [label="common-security-group.yml\\nResources\\nLambdaSecurityGroup\\nSNSEndpointSecurityGroup\\nPublicEC2SecurityGroup\\nPrivateEC2SecurityGroup\\nSSMPublicEC2SecurityGroup\\nSSMPrivateSecurityGroup\\nLambdaSecurityGroupSSM"];
+  "file:common/apse2/EC2/ec2-keypair.yaml" [label="ec2-keypair.yaml\\nResources\\nPublicKeyPair\\nPrivateKeyPair\\nSSMPublicKey\\nSSMPrivateKey"];
+  "file:common/apse2/EC2/ec2-setting-ssm.yaml" [label="ec2-setting-ssm.yaml\\nResources\\nCWAgentConfig\\nEC2ScriptsSSM"];
+  "file:common/apse2/EC2/instance-profile.yaml" [label="instance-profile.yaml\\nResources\\nPublicEC2InstanceProfile\\nPrivateEC2InstanceProfile\\nSSMPublicEC2Instanceprofile\\nSSMPrivateEC2Instanceprofile"];
+  "file:common/apse2/IAM/destination-s3-role.yaml" [label="destination-s3-role.yaml\\nResources\\nS3ReplicationRole\\nS3RoleSSM"];
+  "file:common/apse2/IAM/lambda-iam-policy.yaml" [label="lambda-iam-policy.yaml\\nResources\\nSendMsgPolicy\\nEC2CheckInstancesPolicy\\nLambdaS3AccessPolicy\\nECRLambdaPolicy\\nLambdaDynamoDBPolicy"];
+  "file:common/apse2/IAM/lambda-iam-role.yaml" [label="lambda-iam-role.yaml\\nResources\\nBasicLambdaRole\\nECRLambdaRole\\nDynamoDBLambdaRole\\nApiGwLambdaRole\\nBasicLambdaRoleSSM\\nLambdaRoleECRSSM\\nDynamoDBLambdaRoleSSM\\nApiGwLambdaRoleSSM"];
+  "file:common/apse2/IAM/priv-ec2-iam-role.yaml" [label="priv-ec2-iam-role.yaml\\nResources\\nPrivateEC2Role\\nSSMPrivateEC2InstanceRole"];
+  "file:common/apse2/IAM/public-ec2-iam-role.yaml" [label="public-ec2-iam-role.yaml\\nResources\\nPublicEC2Role\\nSSMPublicEC2InstanceRole"];
+  "file:common/apse2/IAM/s3-iam-role.yaml" [label="s3-iam-role.yaml\\nResources\\nS3ReplicationSourceRole\\nS3ReplicationDestinationRole\\nS3RoleSourceSSM\\nS3RoleDestinationSSM"];
+  "file:common/apse2/IAM/source-s3-role.yaml" [label="source-s3-role.yaml\\nResources\\nS3ReplicationRole\\nS3RoleSSM"];
+  "file:common/apse2/RouteTable/priv-route.yml" [label="priv-route.yml\\nResources\\nPrivateRoutetable\\nNatGateway\\nPrivateRouteToInternet\\nAssoPrivSub1RT\\nAssoPrivSub2RT\\nSSMPrivRoutetable"];
+  "file:common/apse2/RouteTable/public-route.yaml" [label="public-route.yaml\\nResources\\nPublicRoutetable\\nInternetGateway\\nAttachGateway\\nPublicRoute\\nAssoPubSub1RT\\nAssoPubSub2RT\\nSSMPublicRoutetable"];
+  "file:common/apse2/RouteTable/vpc-endpoint.yaml" [label="vpc-endpoint.yaml\\nResources\\nS3Endpoint\\nDynamoDBEndpoint\\nSNSEndpoint\\nSSMS3Endpoint\\nSSMDynamoDBEndpoint\\nSSMSNSEndpoint"];
+  "file:common/apse2/S3/common-s3-bucket.yaml" [label="common-s3-bucket.yaml\\nResources\\nCodeS3Bucket\\nCodeBucketPolicy\\nCodeBucketSSM"];
+  "file:common/apse2/S3/common-s3-code-bucket.yaml" [label="common-s3-code-bucket.yaml\\nResources\\nCodeS3Bucket\\nCodeBucketPolicy\\nCodeBucketSSM"];
+  "file:common/apse2/S3/common-s3-websites-bucket.yaml" [label="common-s3-websites-bucket.yaml\\nResources\\nEC2WebsitesS3Bucket\\nEC2WebsitesS3BucketPolicy\\nEC2WebsitesS3BucketSSM"];
+  "file:common/apse2/SNS/common-sns.yaml" [label="common-sns.yaml\\nResources\\nbasicLambdaSNSTopic\\nbasicLambdaTopicPolicy\\nbasicLambdaSNSTopicSubscription\\nCWInvokeLambdaTopic\\nErrorLambdaSNSTopic\\nErrorLambdaTopicPolicy\\nErrorSNSTopicSubscription\\nErrorMailAddressSNSTopic\\n... +10 more"];
+  "file:common/apse2/Subnet/common-subnet.yml" [label="common-subnet.yml\\nResources\\nPublicSubnet1\\nPublicSubnet2\\nPrivateSubnet1\\nPrivateSubnet2\\nSSMPublicSubnet\\nSSMPublicSubnet2\\nSSMPrivateSubnet\\nSSMPrivateSubnet2"];
+  "file:common/apse2/Subnet/subnet.yml" [label="subnet.yml\\nResources\\nPublicSubnet1\\nPublicSubnet2\\nPrivateSubnet1\\nPrivateSubnet2\\nSSMPublicSubnet\\nSSMPublicSubnet2\\nSSMPrivateSubnet\\nSSMPrivateSubnet2"];
+  "file:common/apse2/VPC/common-vpc.yml" [label="common-vpc.yml\\nResources\\nVpc\\nSSMVpc"];
+  "file:common/apse2/VPC/vpc.yml" [label="vpc.yml\\nResources\\nVpc\\nSSMVpc"];
+  "file:Plan1/apne1/plan1-apne1-s3.yml" [label="plan1-apne1-s3.yml\\nResources\\nDestinationS3Bucket\\nS3BucketPolicy"];
+  "file:Plan1/apse2/plan1-apse2-s3.yaml" [label="plan1-apse2-s3.yaml\\nResources\\nlambdaS3Bucket\\nlambdaS3BucketPolicy\\nlambdaS3BucketSSM"];
+  "file:Plan1/apse2/plan1-lambda.yaml" [label="plan1-lambda.yaml\\nResources\\nMyLambdaFunction"];
+  "file:Plan2/aws/plan2-apigw.yaml" [label="plan2-apigw.yaml\\nResources\\nApiToLambda\\nApiToLambdaResource\\nApiToLambdaMethod\\nLambdaApiInvokePermission\\nApiToLambdaOptionsMethod\\nApiDeployment"];
+  "file:Plan2/aws/plan2-apse2-s3.yaml" [label="plan2-apse2-s3.yaml\\nResources\\nWebS3Bucket\\nWebS3BucketPolicy\\nWebS3BucketSSM"];
+  "file:Plan2/aws/plan2-lambda-data-modification.yaml" [label="plan2-lambda-data-modification.yaml\\nResources\\nApiGwLambdaFunction\\nSSMLambdaFunctionName\\nSSMLambdaFunctionArn"];
+  "file:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml" [label="plan2-lambda-input-into-dynamodb.yaml\\nResources\\nApiGwLambdaFunction\\nSSMLambdaFunctionName\\nSSMLambdaFunctionArn"];
+  "file:Plan2/aws/plan2-lambda-login-data.yaml" [label="plan2-lambda-login-data.yaml\\nResources\\nApiGwLambdaFunction\\nSSMLambdaFunctionName\\nSSMLambdaFunctionArn"];
+  "file:Plan2/old/zip_package/create-html/vendor/bref/bref/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/function/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/http/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/create-html/vendor/bref/bref/template/symfony/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/create-html/vendor/riverline/multipart-parser/.github/workflows/php.yml" [label="php.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/login/vendor/bref/bref/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/login/vendor/bref/bref/template/function/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/login/vendor/bref/bref/template/http/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/login/vendor/bref/bref/template/symfony/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/old/zip_package/login/vendor/riverline/multipart-parser/.github/workflows/php.yml" [label="php.yml\\nResources\\nNo resources"];
+  "file:Plan2/zip_package/login/vendor/bref/bref/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/zip_package/login/vendor/bref/bref/template/function/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/zip_package/login/vendor/bref/bref/template/http/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/zip_package/login/vendor/bref/bref/template/symfony/serverless.yml" [label="serverless.yml\\nResources\\nNo resources"];
+  "file:Plan2/zip_package/login/vendor/riverline/multipart-parser/.github/workflows/php.yml" [label="php.yml\\nResources\\nNo resources"];
+  "file:Plan3/plan3-lambda.yaml" [label="plan3-lambda.yaml\\nResources\\nErrorLambdaFunction\\nErrorLambdaFunctionTrigger\\nSSMLambdaFunctionArn"];
+  "file:Plan4/plan4-dynamodb-table.yaml" [label="plan4-dynamodb-table.yaml\\nResources\\nPlan4DynamoDBTable"];
+  "file:Plan4/plan4-private-ec2-instance.yaml" [label="plan4-private-ec2-instance.yaml\\nResources\\nPrivateInstance\\nSSMPrivateEC2Instance"];
+  "file:Plan4/plan4-public-ec2-instance.yaml" [label="plan4-public-ec2-instance.yaml\\nResources\\nPublicInstance\\nPublicEBSVolume\\nSSMPublicEC2Instance"];
+  "file:Plan5/plan5-evb.yaml" [label="plan5-evb.yaml\\nResources\\nEC2CheckInstancesEventRule\\nLambdaPermissionForEventBridge"];
+  "file:Plan5/plan5-lambda.yaml" [label="plan5-lambda.yaml\\nResources\\nEC2CheckInstancesLambdaFunction\\nSSMEC2CheckInstancesLambdaFunctionArn"];
+  "file:Plan6/old/plan6-ec2-fleet-instances.yaml" [label="plan6-ec2-fleet-instances.yaml\\nResources\\nMyEC2Fleet\\nPublicLaunchTemplate"];
+  "file:Plan6/plan6-ec2-templates.yaml" [label="plan6-ec2-templates.yaml\\nResources\\nPublicEC2LaunchTemplate\\nPublicEC2AutoScalingGroup"];
+  "file:Plan6/plan6-eventbridge.yaml" [label="plan6-eventbridge.yaml\\nResources\\nDLMEventRule"];
+  "file:Plan6/plan6-lifecycle-manager.yaml" [label="plan6-lifecycle-manager.yaml\\nResources\\nPublicEC2AMILifecyclePolicy\\nPublicEBSVolumeLifecyclePolicy"];
+  "file:Plan7/plan7-ecr-lambda.yaml" [label="plan7-ecr-lambda.yaml\\nResources\\nECRLambdaFunction\\nSSMECRLambdaFunctionArn"];
+  "file:Plan7/plan7-ecr.yaml" [label="plan7-ecr.yaml\\nResources\\nECRRegistry\\nECRRepositorySSM"];
+  "file:Plan7/plan7-evb.yaml" [label="plan7-evb.yaml\\nResources\\nEcrEc2CheckInstancesEventRule\\nLambdaPermissionForEventBridge"];
+  "file:Plan8/plan8-alb.yaml" [label="plan8-alb.yaml\\nResources\\nPlan8ALB\\nPlan8ALBTargetGroup\\nPlan8ALBTargetGroupAttachment\\nPlan8ALBListener\\nPlan8ALBListenerRule\\nPlan8ALBSSMParameter"];
+  "file:test.yaml" [label="test.yaml\\nResources\\nTestWebS3BucketName\\nTestErrorSNSTopic"];
+  "file:common/apse2/EC2/instance-profile.yaml" -> "file:common/apse2/IAM/priv-ec2-iam-role.yaml" [label="RefCrossFileUnique
+PrivateEC2Role"];
+  "file:common/apse2/EC2/instance-profile.yaml" -> "file:common/apse2/IAM/public-ec2-iam-role.yaml" [label="RefCrossFileUnique
+PublicEC2Role"];
+  "file:common/apse2/IAM/lambda-iam-policy.yaml" -> "file:common/apse2/IAM/lambda-iam-role.yaml" [label="RefCrossFileUnique
+ApiGwLambdaRole
+BasicLambdaRole
+DynamoDBLambdaRole"];
+  "file:common/apse2/IAM/lambda-iam-role.yaml" -> "file:common/apse2/IAM/lambda-iam-policy.yaml" [label="SSMParameterLink
+ApiGwLambdaRole
+BasicLambdaRole
+DynamoDBLambdaRole
++1 more"];
+  "file:common/apse2/RouteTable/vpc-endpoint.yaml" -> "file:common/apse2/RouteTable/priv-route.yml" [label="RefCrossFileUnique
+PrivateRoutetable"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:common/apse2/CloudWatch/common-cw-metric-alarm.yaml" [label="SSMParameterLink
+/ErrorLambdaSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan2/aws/plan2-lambda-data-modification.yaml" [label="SSMParameterLink
+/basicSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml" [label="SSMParameterLink
+/basicSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan2/aws/plan2-lambda-login-data.yaml" [label="SSMParameterLink
+/basicSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan3/plan3-lambda.yaml" [label="SSMParameterLink
+/ErrorLambdaSNSTopic
+/ErrorMailAddressSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan5/plan5-lambda.yaml" [label="SSMParameterLink
+/basicSNSTopic"];
+  "file:common/apse2/SNS/common-sns.yaml" -> "file:Plan7/plan7-ecr-lambda.yaml" [label="SSMParameterLink
+/basicSNSTopic"];
+  "file:Plan2/aws/plan2-lambda-data-modification.yaml" -> "file:Plan2/aws/plan2-apigw.yaml" [label="SSMParameterLink
+/ApiGWLambdaFunctionArn
+/ApiGWLambdaFunctionName"];
+  "file:Plan2/aws/plan2-lambda-input-into-dynamodb.yaml" -> "file:Plan2/aws/plan2-apigw.yaml" [label="SSMParameterLink
+/ApiGWLambdaFunctionArn
+/ApiGWLambdaFunctionName"];
+  "file:Plan2/aws/plan2-lambda-login-data.yaml" -> "file:Plan2/aws/plan2-apigw.yaml" [label="SSMParameterLink
+/ApiGWLambdaFunctionArn
+/ApiGWLambdaFunctionName"];
+  "file:Plan3/plan3-lambda.yaml" -> "file:common/apse2/SNS/common-sns.yaml" [label="SSMParameterLink
+/ErrorLambdaFunctionName"];
+  "file:Plan4/plan4-private-ec2-instance.yaml" -> "file:common/apse2/EC2/ec2-keypair.yaml" [label="RefCrossFileUnique
+PrivateKeyPair"];
+  "file:Plan4/plan4-private-ec2-instance.yaml" -> "file:common/apse2/EC2/ec2-setting-ssm.yaml" [label="RefCrossFileUnique
+CWAgentConfig
+EC2ScriptsSSM"];
+  "file:Plan4/plan4-private-ec2-instance.yaml" -> "file:common/apse2/EC2/instance-profile.yaml" [label="RefCrossFileUnique
+PrivateEC2InstanceProfile"];
+  "file:Plan4/plan4-public-ec2-instance.yaml" -> "file:common/apse2/EC2/ec2-keypair.yaml" [label="RefCrossFileUnique
+PublicKeyPair"];
+  "file:Plan4/plan4-public-ec2-instance.yaml" -> "file:common/apse2/EC2/ec2-setting-ssm.yaml" [label="RefCrossFileUnique
+CWAgentConfig
+EC2ScriptsSSM"];
+  "file:Plan4/plan4-public-ec2-instance.yaml" -> "file:common/apse2/EC2/instance-profile.yaml" [label="RefCrossFileUnique
+PublicEC2InstanceProfile"];
+  "file:Plan5/plan5-lambda.yaml" -> "file:Plan5/plan5-evb.yaml" [label="SSMParameterLink
+/EC2CheckInstancesLambdaFunctionName"];
+  "file:Plan6/old/plan6-ec2-fleet-instances.yaml" -> "file:common/apse2/EC2/common-security-group.yml" [label="RefCrossFileUnique
+PublicEC2SecurityGroup"];
+  "file:Plan6/old/plan6-ec2-fleet-instances.yaml" -> "file:common/apse2/EC2/ec2-keypair.yaml" [label="RefCrossFileUnique
+PublicKeyPair"];
+  "file:Plan6/plan6-ec2-templates.yaml" -> "file:common/apse2/EC2/ec2-keypair.yaml" [label="RefCrossFileUnique
+PublicKeyPair"];
+  "file:Plan6/plan6-ec2-templates.yaml" -> "file:common/apse2/EC2/instance-profile.yaml" [label="RefCrossFileUnique
+PublicEC2InstanceProfile"];
+  "file:Plan7/plan7-ecr-lambda.yaml" -> "file:Plan7/plan7-evb.yaml" [label="SSMParameterLink
+/ECRLambdaFunctionName"];
+}

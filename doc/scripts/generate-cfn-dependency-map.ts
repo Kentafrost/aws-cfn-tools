@@ -930,7 +930,6 @@ async function main(): Promise<void> {
 
   const mapJson = {
     generatedAt: new Date().toISOString(),
-    rootDir,
     stats: {
       yamlFiles: yamlFiles.length,
       resources: resourceNodes.length,

@@ -3,188 +3,86 @@
 このリポジトリは、AWS CloudFormationを使用したインフラストラクチャ自動化の学習と実装を目的としたプロジェクトです。
 
 ## 📋 目次
-- [プロジェクト概要](#プロジェクト概要)
-- [フォルダ構造](#フォルダ構造)
-- [各プランの詳細](#各プランの詳細)
-- [共通リソース](#共通リソース)
-- [Part別リソース相関図（PNG）](#part別リソース相関図png)
-- [使用方法](#使用方法)
-- [前提条件](#前提条件)
+| セクション | リンク |
+|---|---|
+| プロジェクト概要 | [プロジェクト概要](#プロジェクト概要) |
+| フォルダ構造 | [フォルダ構造](#フォルダ構造) |
+| YAML クイックマトリクス（全件確認） | [YAML クイックマトリクス（全件確認）](#yaml-クイックマトリクス全件確認) |
+| 使用方法 | [使用方法](#使用方法) |
+| 前提条件 | [前提条件](#前提条件) |
 
 ## 🎯 プロジェクト概要
 
-### **学習中の技術**
-- **AWS CloudFormation:** YAMLテンプレートを使用したリソースプロビジョニングとインフラセットアップの自動化
-- **Infrastructure as Code (IaC):** 信頼性があり再現可能なクラウドデプロイメントのベストプラクティスの実装
-- **AWS サービス:** EC2、S3、Lambda、その他の基盤サービスを使用した効果的なアプリケーションの構築と管理
+このセクションは、プロジェクトの優先度が変化しうるため、意図的に要約レベルで記載しています。
 
-### **現在の開発目標**
-- EC2インスタンスへのアプリケーションインストールとSSM Managersによる自動更新の実装
-- 全EC2インスタンスでのRUNコマンド実行機能
-- S3バケット内のHTMLを使用したログインシステム（Lambda、PHP、API Gateway、DynamoDB連携）
+### **中核方針（可変スコープ）**
+| 方針 | 内容 |
+|---|---|
+| CloudFormation ファーストの運用 | 再利用可能な YAML テンプレートを軸に AWS インフラを構築・拡張 |
+| IaC オペレーション | デプロイを再現可能・レビュー可能にし、保守性を高める |
+| サービス統合の実践 | EC2、S3、Lambda、API Gateway、CloudWatch、DynamoDB、ECR などをプラン単位で組み合わせる |
+
+### **最新フォーカスの追跡方法**
+| 確認対象 | 参照先 |
+|---|---|
+| プラン固有の目的・実装詳細 | 各プランフォルダ内の README.md |
+| 進行中メモや今後の変更案 | memo_to_add.md |
+| テンプレート単位の実装状況 | [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) / [doc/display-yaml.html](doc/display-yaml.html) |
 
 ## 📁 フォルダ構造
 
-```
-aws-cfn-tools/
-├── Plan1/          # VPC、S3エンドポイント、Lambda、S3レプリケーション
-├── Plan2/          # HTMLデータ処理とAWS統合
-├── Plan3/          # CloudWatchログベースのアラートワークフロー
-├── Plan4/          # EC2インスタンスデプロイメント（Windows Server + IIS）
-├── Plan5/          # EC2インスタンス自動管理とEventBridge連携
-├── Plan6/          # AMIライフサイクル自動化とDLM
-├── Plan7/          # ECR + Lambdaコンテナー統合
-├── Plan8/          # 追加のプロジェクト
-├── common/         # 共通リソーステンプレート
-│   └── apse2/      # ap-southeast-2リージョン用テンプレート
-├── memo_to_add.md  # プロジェクトメモと将来の機能
-├── test.yaml       # SSMパラメーターテスト用テンプレート
-└── yaml_files_list.csv  # 全YAMLファイルのカタログ
-```
+このリポジトリ構成は、プランや検証内容の進行に応じて変化する可能性があります。
 
-## 🔧 各プランの詳細
+現時点の主要エントリ（安定参照）:
+| エントリ | 説明 |
+|---|---|
+| common/ | 共有テンプレート（例: リージョン共通のベースリソース） |
+| PlanX/ | シナリオ別テンプレートとプラン固有ドキュメント |
+| doc/ | 可視化・分析用ページ |
+| doc/scripts/ | マトリクスや相関出力の生成スクリプト |
+| memo_to_add.md | メモと今後の変更案 |
 
-### Plan1: VPCエンドポイントとS3統合
-- **目的:** Lambda関数からS3バケットへのVPCエンドポイント経由アクセス
-- **機能:** S3バケットのリージョン間レプリケーション（東京 ⇔ シドニー）
-- **リソース:** VPC、ルートテーブル、VPCエンドポイント、サブネット、セキュリティグループ、Lambda、S3
+テンプレート一覧や依存関係の最新情報は以下を参照してください:
+| 用途 | リンク |
+|---|---|
+| テンプレート一覧・件数・分布 | [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) |
+| テンプレート相関・詳細表示 | [doc/display-yaml.html](doc/display-yaml.html) |
 
-### Plan2: HTMLデータ処理
-- **目的:** HTMLデータの管理とAWSサービス統合
-- **ファイル:** html_input_data.csv、設定ファイル
+この README は要約レベルの情報に限定し、テンプレート単位の詳細テーブルは HTML 側で管理します。
 
-### Plan3: CloudWatchログアラートシステム
-- **ワークフロー:** 
-  ```
-  Lambda → CloudWatch Logs → Metric Filter → CloudWatch Alarm → SNS → Lambda for Alarm → Email通知
-  ```
-- **機能:** ログパターンの監視、メトリクス抽出、自動アラート、メール通知
+## ✅ YAML クイックマトリクス（全件確認）
 
-### Plan4: EC2インスタンス管理
-- **プラットフォーム:** Windows Server + IIS
-- **機能:** CloudWatchエージェント、SSM統合、Webサイトアクセス可能
-- **テンプレート:**
-  - `plan4-public-ec2-instance.yaml` - パブリックインスタンス
-  - `plan4-private-ec2-instance.yaml` - プライベートインスタンス
-  - `plan4-dynamodb-table.yaml` - DynamoDBテーブル
+テンプレートごとの実装状況・サービス分布・件数は、以下で最新状態を確認できます。
 
-### Plan5: EC2自動管理システム
-- **機能:** EC2インスタンスのステータスチェックと自動停止
-- **ワークフロー:** Lambda実行 → インスタンス停止 → SNS通知 → エラーハンドリング
-- **監視:** CloudWatch Logs、メトリクス、アラーム
-
-### Plan6: AMIライフサイクル管理
-- **機能:** AMI作成とEBSスナップショットの自動化
-- **スケジューリング:** 定期的なバックアップ作成
-- **通知:** EventBridgeルールとSNS連携
-- **スクリプト:** `create_ami.py` - AMI作成自動化
-
-### Plan7: ECRとLambdaコンテナー
-- **機能:** ECRリポジトリとLambdaコンテナーの統合
-- **ファイル:**
-  - `plan7-ecr.yaml` - ECRリポジトリ
-  - `plan7-ecr-lambda.yaml` - Lambda統合
-  - `Dockerfile/` - コンテナー定義
-
-## 🔄 共通リソース (common/apse2/)
-
-### EC2関連
-- **ec2-keypair.yaml** - EC2キーペア設定
-- **ec2-setting-ssm.yaml** - SSM設定
-- **instance-profile.yaml** - インスタンスプロファイル
-- **common-security-group.yml** - 共通セキュリティグループ
-
-### IAM関連
-- **lambda-iam-role.yaml** - Lambda実行ロール
-- **public-ec2-iam-role.yaml** - パブリックEC2ロール
-- **priv-ec2-iam-role.yaml** - プライベートEC2ロール
-- **destination-s3-role.yaml** - S3転送先ロール
-
-### S3関連
-- **common-s3-bucket.yaml** - 基本S3バケット
-- **common-s3-websites-bucket.yaml** - ウェブサイト用S3バケット
-- **common-s3-code-bucket.yaml** - コード保管用S3バケット
-
-### その他のサービス
-- **VPC/** - VPC設定テンプレート
-- **Subnet/** - サブネット設定
-- **RouteTable/** - ルートテーブル設定
-- **SNS/** - 通知サービス設定
-- **CloudWatch/** - モニタリング設定
-
-## 🗺️ Part別リソース相関図（PNG）
-
-リソース同士の関係をPartごとに分割した図です。
-SSMは各図で「Separate Frame」として別枠表示にしています。
-
-### Part1
-![Part1 Resource Map](doc/result/relation-map/part1-resource-map.png)
-
-### Part2
-![Part2 Resource Map](doc/result/relation-map/part2-resource-map.png)
-
-### Part3
-![Part3 Resource Map](doc/result/relation-map/part3-resource-map.png)
-
-### Part4
-![Part4 Resource Map](doc/result/relation-map/part4-resource-map.png)
-
-### Part5
-![Part5 Resource Map](doc/result/relation-map/part5-resource-map.png)
-
-### Part6
-![Part6 Resource Map](doc/result/relation-map/part6-resource-map.png)
-
-### Part7
-![Part7 Resource Map](doc/result/relation-map/part7-resource-map.png)
-
-### Part8
-![Part8 Resource Map](doc/result/relation-map/part8-resource-map.png)
+| 項目 | リンク |
+|---|---|
+| YAML クイックマトリクス | [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) |
+| YAML 詳細表示 | [doc/display-yaml.html](doc/display-yaml.html) |
 
 ## 🚀 使用方法
 
-### YAML相関マッピングの生成（TypeScript）
-
-CloudFormation YAML 全体の依存関係を `js-yaml + graphlib + dagre` で抽出し、
-目視確認用の JSON/DOT を生成できます。
-
-```bash
-npm install
-npm run cfn:map
-```
-
-生成物（`relation-map/`）:
-
-- `cfn-resource-map.json`: リソース、依存エッジ、SSMパラメータ連携、循環情報
-- `cfn-resource-graph.dot`: Graphviz で可視化可能なDOTファイル
-- `cfn-resource-layout.json`: dagre の座標レイアウト結果
-- `cfn-resource-graph.svg`: 静的に共有できるSVG画像
-- `cfn-resource-graph.html`: part別フィルタ付きの相関ビュー
-
-各partのYAMLファイルの相関は以下のファイルを参照ください。
-[display-yaml.html](https://kentafrost.github.io/aws-cfn-tools/doc/display-yaml.html)
-
 ### 基本デプロイメント
-```bash
-# 共通リソースのデプロイ
-aws cloudformation create-stack --stack-name common-resources --template-body file://common/apse2/[resource].yaml
-
-# 個別プランのデプロイ
-aws cloudformation create-stack --stack-name plan1-resources --template-body file://Plan1/[template].yaml
-```
+| 対象 | コマンド |
+|---|---|
+| 共通リソースのデプロイ | `aws cloudformation create-stack --stack-name common-resources --template-body file://common/apse2/[resource].yaml` |
+| 個別プランのデプロイ | `aws cloudformation create-stack --stack-name plan1-resources --template-body file://Plan1/[template].yaml` |
 
 ### 前提条件
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - 適切な認証情報で設定済み
-- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) - サーバーレステンプレート用
-- [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) - Python自動化スクリプト用
-- 適切なIAMアクセス許可 - EC2、S3、IAM、CloudWatchリソースの作成・管理権限
+| 項目 | 内容 |
+|---|---|
+| [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) | 適切な認証情報で設定済み |
+| [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) | サーバーレステンプレート用 |
+| [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) | Python自動化スクリプト用 |
+| IAM アクセス許可 | EC2、S3、IAM、CloudWatchリソースの作成・管理権限 |
 
 ## 📊 プロジェクト統計
-- **YAMLテンプレート:** 30+ ファイル
-- **対象AWSサービス:** EC2, S3, Lambda, CloudWatch, SNS, IAM, DynamoDB, ECR
-- **リージョン:** ap-southeast-2 (メイン), ap-northeast-1 (レプリケーション)
-- **自動化スクリプト:** Python (boto3), PowerShell
+| 指標 | 値 |
+|---|---|
+| YAML とリソース件数 | [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) で動的生成 |
+| サービス分布 | [doc/yaml-quick-matrix.html](doc/yaml-quick-matrix.html) で動的生成 |
+| リージョン | ap-southeast-2（メイン、シドニー）, ap-northeast-1（レプリケーション、東京） |
+| 自動化スクリプト | Python (boto3), PowerShell |
 
 ---
 
-**注記:** 各プランフォルダには詳細なREADME.mdファイルが含まれており、具体的な実装手順と設定詳細を参照できます。
+**注記:** 各プランフォルダには、具体的な実装手順と設定詳細を記載した詳細 README.md があります。

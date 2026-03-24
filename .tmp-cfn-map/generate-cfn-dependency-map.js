@@ -807,7 +807,6 @@ async function main() {
     });
     const mapJson = {
         generatedAt: new Date().toISOString(),
-        rootDir,
         stats: {
             yamlFiles: yamlFiles.length,
             resources: resourceNodes.length,

@@ -1,6 +1,5 @@
 window.CFN_RESOURCE_MAP = {
-  "generatedAt": "2026-03-15T09:54:04.600Z",
-  "rootDir": "C:\\Users\\kenta\\デスクトップ\\Git\\Public\\aws-cfn-tools",
+  "generatedAt": "2026-03-24T03:28:31.909Z",
   "stats": {
     "yamlFiles": 62,
     "resources": 173,

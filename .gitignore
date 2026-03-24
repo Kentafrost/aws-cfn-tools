@@ -6,6 +6,7 @@
 **/old/**
 **/*.json
 **/*.csv
+**/*.txt
 !relation-map/
 !relation-map/*.json
 !relation-map/*.dot
